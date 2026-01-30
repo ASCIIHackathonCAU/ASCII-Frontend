@@ -1,218 +1,203 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { Upload, BarChart3, BookOpen, Shield, FileText, Info, Mail } from 'lucide-react'
 
+const cardClass =
+  'group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/90 p-8 shadow-[0_12px_40px_rgba(15,23,42,0.08)] backdrop-blur transition hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(15,23,42,0.12)]'
+
+const iconWrap = 'rounded-xl bg-gradient-to-br from-sky-100 via-indigo-50 to-white p-4 shadow-inner'
+const accent = 'text-sky-600'
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f6f1e8]">
-      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-10">
-        <header className="flex flex-col gap-6">
-          <h1 className="text-5xl font-bold text-[#1b1410] leading-tight">
-            동의 문서 관리
+    <main className="min-h-screen">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 py-12">
+        <header className="flex flex-col gap-4">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Consent Fabric</p>
+          <h1 className="text-5xl font-semibold leading-tight text-slate-900">
+            동의 문서 관리 허브
           </h1>
-          <p className="text-xl text-[#2d241f] leading-relaxed">
-            동의 문서를 체계적으로 관리하고, 문서 유형과 위험도를 파악하여 개인정보를 보호합니다.
-            영수증을 생성하고 패턴을 분석하여 더 나은 개인정보 관리 결정을 내릴 수 있습니다.
+          <p className="max-w-4xl text-lg leading-relaxed text-slate-600">
+            흩어진 동의 문서를 한곳에 모으고 템플릿·자동 분류로 개인정보 권리 행사를 빠르게 돕습니다.
           </p>
         </header>
 
         <div className="grid gap-8 md:grid-cols-2">
-          <Link
-            href="/ingest"
-            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="rounded-xl bg-[#fff4e6] p-4">
-                <Upload className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+          <Link href="/ingest" className={cardClass}>
+            <div className="mb-6 flex items-center gap-4">
+              <div className={iconWrap}>
+                <Upload className={`h-10 w-10 ${accent}`} strokeWidth={2.4} />
               </div>
-              <h2 className="text-3xl font-bold text-[#1b1410]">
-                문서 업로드
-              </h2>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Step 1</p>
+                <h2 className="text-3xl font-semibold text-slate-900">문서 수집하기</h2>
+              </div>
             </div>
-            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
-              동의 문서를 붙여넣거나 업로드합니다.
-            </p>
-            <ul className="space-y-2 text-base text-[#2d241f]">
+            <p className="mb-4 text-base leading-relaxed text-slate-600">동의·약관·수신 동의 메일을 가져와 보관합니다.</p>
+            <ul className="space-y-2 text-sm text-slate-600">
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>텍스트 붙여넣기 또는 파일 업로드</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>이메일 연동 또는 파일 업로드</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>샘플 문서로 테스트</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>스캔 PDF도 텍스트 추출</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>영수증 자동 생성</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>핵심 요약 자동 생성</span>
               </li>
             </ul>
           </Link>
 
-          <Link
-            href="/consent-dashboard"
-            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="rounded-xl bg-[#fff4e6] p-4">
-                <Mail className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+          <Link href="/consent-dashboard" className={cardClass}>
+            <div className="mb-6 flex items-center gap-4">
+              <div className={iconWrap}>
+                <Mail className={`h-10 w-10 ${accent}`} strokeWidth={2.4} />
               </div>
-              <h2 className="text-3xl font-bold text-[#1b1410]">
-                동의 관리 대시보드
-              </h2>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Step 2</p>
+                <h2 className="text-3xl font-semibold text-slate-900">동의 인박스 분류</h2>
+              </div>
             </div>
-            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
-              이메일에서 동의 관련 메일을 자동으로 수집하고 관리합니다.
-            </p>
-            <ul className="space-y-2 text-base text-[#2d241f]">
+            <p className="mb-4 text-base leading-relaxed text-slate-600">Gmail·Outlook API 연동으로 동의 메일을 자동 분류합니다.</p>
+            <ul className="space-y-2 text-sm text-slate-600">
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
+                <span className={`${accent} font-bold`}>•</span>
                 <span>메일 API 연동 (Gmail/Outlook)</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>동의 메일 자동 분류</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>동의 메일 자동 라우팅</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>분야별 동의 이력 확인</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>위험 신호 요약 표시</span>
               </li>
             </ul>
           </Link>
 
-          <Link
-            href="/revocation"
-            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="rounded-xl bg-[#fff4e6] p-4">
-                <FileText className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+          <Link href="/revocation" className={cardClass}>
+            <div className="mb-6 flex items-center gap-4">
+              <div className={iconWrap}>
+                <FileText className={`h-10 w-10 ${accent}`} strokeWidth={2.4} />
               </div>
-              <h2 className="text-3xl font-bold text-[#1b1410]">
-                철회/삭제 요청
-              </h2>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Step 3</p>
+                <h2 className="text-3xl font-semibold text-slate-900">철회·삭제 요청</h2>
+              </div>
             </div>
-            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
-              개인정보 삭제, 동의 철회, 제3자 제공 중단 등을 요청합니다.
-            </p>
-            <ul className="space-y-2 text-base text-[#2d241f]">
+            <p className="mb-4 text-base leading-relaxed text-slate-600">개인정보 삭제, 동의 철회, 제3자 제공 중단을 한 번에 작성합니다.</p>
+            <ul className="space-y-2 text-sm text-slate-600">
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>요청서 자동 생성</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>요청서 템플릿 자동 채움</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
+                <span className={`${accent} font-bold`}>•</span>
                 <span>기관별 제출 경로 안내</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>요청 상태 추적</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>진행 상태 추적</span>
               </li>
             </ul>
           </Link>
 
-          <Link
-            href="/dashboard"
-            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="rounded-xl bg-[#fff4e6] p-4">
-                <BarChart3 className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+          <Link href="/dashboard" className={cardClass}>
+            <div className="mb-6 flex items-center gap-4">
+              <div className={iconWrap}>
+                <BarChart3 className={`h-10 w-10 ${accent}`} strokeWidth={2.4} />
               </div>
-              <h2 className="text-3xl font-bold text-[#1b1410]">
-                통계 보기
-              </h2>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Step 4</p>
+                <h2 className="text-3xl font-semibold text-slate-900">현황 대시보드</h2>
+              </div>
             </div>
-            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
-              패턴 통계와 분포를 확인합니다.
-            </p>
-            <ul className="space-y-2 text-base text-[#2d241f]">
+            <p className="mb-4 text-base leading-relaxed text-slate-600">동의 추세와 위험도를 한눈에 확인합니다.</p>
+            <ul className="space-y-2 text-sm text-slate-600">
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>월별 수신 건수 분석</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>월별 수집 문서 추이</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>위험도별 분류 통계</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>분야·서비스별 위험도</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#de3f1c] font-bold">•</span>
-                <span>카테고리 분포 확인</span>
+                <span className={`${accent} font-bold`}>•</span>
+                <span>요청 진행률 모니터링</span>
               </li>
             </ul>
           </Link>
         </div>
 
-        <Link
-          href="/inbox"
-          className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="rounded-xl bg-[#fff4e6] p-4">
-              <BookOpen className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+        <Link href="/inbox" className={`${cardClass} md:col-span-2`}>
+          <div className="mb-6 flex items-center gap-4">
+            <div className={iconWrap}>
+              <BookOpen className={`h-10 w-10 ${accent}`} strokeWidth={2.4} />
             </div>
-            <h2 className="text-3xl font-bold text-[#1b1410]">
-              가이드라인 보기
-            </h2>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Guide</p>
+              <h2 className="text-3xl font-semibold text-slate-900">가이드북 모음</h2>
+            </div>
           </div>
-          <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
-            문서 유형과 위험도 가이드라인을 확인합니다.
-          </p>
-          <ul className="space-y-2 text-base text-[#2d241f]">
+          <p className="mb-4 text-base leading-relaxed text-slate-600">문서 유형과 동의권 행사를 위한 실전 가이드를 확인하세요.</p>
+          <ul className="space-y-2 text-sm text-slate-600">
             <li className="flex items-start gap-2">
-              <span className="text-[#de3f1c] font-bold">•</span>
-              <span>문서 유형별 가이드라인</span>
+              <span className={`${accent} font-bold`}>•</span>
+              <span>문서 유형별 체크리스트</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#de3f1c] font-bold">•</span>
-              <span>위험도 분류 기준</span>
+              <span className={`${accent} font-bold`}>•</span>
+              <span>권리 행사 절차 설명</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-[#de3f1c] font-bold">•</span>
-              <span>각 유형별 주의사항</span>
+              <span className={`${accent} font-bold`}>•</span>
+              <span>자주 묻는 질문</span>
             </li>
           </ul>
         </Link>
 
-        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
-          <div className="flex items-center gap-3 mb-6">
-            <Info className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
-            <h2 className="text-2xl font-bold text-[#1b1410]">
-              서비스 소개
-            </h2>
+        <section className={`${cardClass} border-dashed`}>
+          <div className="mb-6 flex items-center gap-3">
+            <div className={iconWrap}>
+              <Info className={`h-8 w-8 ${accent}`} strokeWidth={2.4} />
+            </div>
+            <h2 className="text-2xl font-semibold text-slate-900">주요 안내</h2>
           </div>
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#1b1410] flex items-center gap-3">
-                <FileText className="h-6 w-6 text-[#de3f1c]" strokeWidth={2.5} />
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <h3 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
+                <FileText className={`h-6 w-6 ${accent}`} strokeWidth={2.4} />
                 동의 문서 관리
               </h3>
-              <p className="text-lg text-[#2d241f] leading-relaxed">
-                동의 문서를 업로드하고 분석하여 영수증을 생성합니다. 문서의 유형과 위험도를 자동으로 분류하여
-                개인정보 보호에 도움을 줍니다.
+              <p className="text-base leading-relaxed text-slate-600">
+                동의 문서를 업로드하고 요약을 확인하세요. 유형과 목적을 자동 분류하여 개인정보 리스크를 한눈에 보여줍니다.
               </p>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#1b1410] flex items-center gap-3">
-                <Shield className="h-6 w-6 text-[#de3f1c]" strokeWidth={2.5} />
-                주요 기능
+            <div className="space-y-3">
+              <h3 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
+                <Shield className={`h-6 w-6 ${accent}`} strokeWidth={2.4} />
+                안전 장치
               </h3>
-              <ul className="space-y-2 text-lg text-[#2d241f]">
+              <ul className="space-y-2 text-base text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-[#de3f1c] font-bold">•</span>
-                  <span>동의 문서 텍스트 분석 및 구조화</span>
+                  <span className={`${accent} font-bold`}>•</span>
+                  <span>동의 문서 텍스트/해시 보관</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#de3f1c] font-bold">•</span>
-                  <span>위험도 자동 분류 (낮음/보통/높음)</span>
+                  <span className={`${accent} font-bold`}>•</span>
+                  <span>권리행사 자동 라우팅 (삭제/철회/정지)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#de3f1c] font-bold">•</span>
-                  <span>문서 유형별 가이드라인 제공</span>
+                  <span className={`${accent} font-bold`}>•</span>
+                  <span>문서 유형별 가이드 링크</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#de3f1c] font-bold">•</span>
-                  <span>영수증 패턴 통계 및 분석</span>
+                  <span className={`${accent} font-bold`}>•</span>
+                  <span>요청 진행률·증빙 패키지</span>
                 </li>
               </ul>
             </div>

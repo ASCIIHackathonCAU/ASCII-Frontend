@@ -1,38 +1,69 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b1224;
+    --foreground: #e2e8f0;
   }
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  background: radial-gradient(120% 90% at 20% 10%, #e0f2fe 0%, transparent 55%),
+    radial-gradient(110% 70% at 80% 0%, #e9d5ff 0%, transparent 50%),
+    #f8fafc;
+  font-family: 'Inter', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕',
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 접근성 개선: 포커스 표시 강화 */
+/* 명확한 포커스 링: 시인성과 접근성 강화 */
 *:focus-visible {
-  outline: 3px solid #de3f1c;
-  outline-offset: 2px;
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
 }
 
-/* 버튼과 링크의 최소 터치 영역 보장 */
-button, a {
+/* 버튼·링크 최소 터치 영역 유지 */
+button,
+a {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* Legacy palette remap → mock-inspired cool/neutral tone */
+.bg-\[\#f6f1e8\] { background-color: #f5f7fb !important; }
+.bg-\[\#fffaf4\], .bg-\[\#fff4e6\] { background-color: #f8fafc !important; }
+.text-\[\#1b1410\] { color: #0f172a !important; }
+.text-\[\#2d241f\], .text-\[\#6b5a4b\], .text-\[\#5c4c41\], .text-\[\#8b6b53\] { color: #475569 !important; }
+.bg-\[\#de3f1c\] { background-color: #2563eb !important; }
+.text-\[\#de3f1c\] { color: #2563eb !important; }
+.hover\:bg-\[\#b23b1e\]:hover { background-color: #1d4ed8 !important; }
+.hover\:bg-\[\#fff4e6\]:hover { background-color: #e2e8f0 !important; }
+.bg-\[\#ffb347\] { background-color: #fbbf24 !important; }
+.bg-\[\#b7d6c6\] { background-color: #d1fae5 !important; }
+.text-\[\#1e5b3a\] { color: #0f766e !important; }
+.bg-\[\#ffe8d5\] { background-color: #fffbeb !important; }
+.text-\[\#8a4a1f\] { color: #92400e !important; }
+.bg-\[\#ffe0cc\] { background-color: #fff7ed !important; }
+.text-\[\#b23b1e\] { color: #b91c1c !important; }
+.bg-\[\#2d241f\] { background-color: #0f172a !important; }
+.border-\[\#2d241f\], .border-\[\#e4d4c3\] { border-color: #e2e8f0 !important; }
+.border-4.border-\[\#2d241f\],
+.border-2.border-\[\#2d241f\] {
+  border-width: 1.5px !important;
+  border-color: #e2e8f0 !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(6px);
 }
 
