@@ -3,9 +3,10 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Upload, FileText, Database } from 'lucide-react'
+import { Upload, FileText, Database, Trash2, X } from 'lucide-react'
 import sampleDocs from '@/receiptos-contracts/samples/documents.json'
 import { createReceiptFromText, listReceipts, loadSampleReceipts, saveReceiptToStorage } from '@/lib/receiptClient'
+import { deleteReceipt } from '@/lib/receiptStorage'
 import { Receipt } from '@/lib/receiptTypes'
 
 type SampleDoc = {
@@ -21,6 +22,7 @@ export default function IngestPage() {
   const [receipts, setReceipts] = useState<Receipt[]>(() => listReceipts())
   const [selectedSample, setSelectedSample] = useState<SampleDoc | null>(null)
   const [selectedFileName, setSelectedFileName] = useState<string>('')
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
   const samples = useMemo(() => sampleDocs as SampleDoc[], [])
 
@@ -65,9 +67,27 @@ export default function IngestPage() {
     router.push(`/receipt/${receipt.id}`)
   }
 
+  const handleDeleteClick = (id: string) => {
+    setDeleteTargetId(id)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (!deleteTargetId) return
+    deleteReceipt(deleteTargetId)
+    setReceipts(listReceipts())
+    setDeleteTargetId(null)
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteTargetId(null)
+  }
+
   return (
     <main className="min-h-screen bg-[#f6f1e8]">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12">
+        <Link href="/" className="text-sm font-semibold text-[#de3f1c] hover:underline self-start">
+          ← 메인으로 돌아가기
+        </Link>
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8b6b53]">
@@ -200,21 +220,63 @@ export default function IngestPage() {
                 key={receipt.id}
                 className="flex items-center justify-between rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 transition hover:bg-white"
               >
-                <div>
+                <div className="flex-1">
                   <p className="text-sm font-semibold text-[#1b1410]">{receipt.service_name}</p>
                   <p className="mt-1 text-xs text-[#6b5a4b]">{receipt.summary}</p>
                 </div>
-                <Link
-                  href={`/receipt/${receipt.id}`}
-                  className="text-xs font-semibold text-[#de3f1c] hover:underline"
-                >
-                  보기
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/receipt/${receipt.id}`}
+                    className="text-xs font-semibold text-[#de3f1c] hover:underline"
+                  >
+                    보기
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteClick(receipt.id)}
+                    className="rounded-lg p-1.5 text-[#b23b1e] transition hover:bg-[#ffe0cc]"
+                    title="삭제"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         </section>
       </div>
+
+      {deleteTargetId && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_20px_50px_rgba(15,11,9,0.3)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[#1b1410]">영수증 삭제</h3>
+              <button
+                onClick={handleDeleteCancel}
+                className="rounded-lg p-1 text-[#6b5a4b] transition hover:bg-[#fffaf4]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-sm text-[#6b5a4b] mb-6">
+              이 영수증을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteCancel}
+                className="flex-1 rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="flex-1 rounded-2xl bg-[#b23b1e] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#9a3219]"
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

@@ -1,4 +1,5 @@
 import inboxDocuments from '@/lib/fixtures/inboxDocuments.json'
+import { fetchInboxDocuments } from '@/lib/api/inboxApi'
 
 export type DocumentRiskLevel = 'LOW' | 'MED' | 'HIGH'
 export type DocumentType =
@@ -21,11 +22,19 @@ export type DocumentListItem = {
 
 const mockEnabled = process.env.NEXT_PUBLIC_MOCK === 'true'
 
-export const getInboxDocuments = (): DocumentListItem[] => {
-  if (!mockEnabled) {
+export const getInboxDocuments = async (): Promise<DocumentListItem[]> => {
+  // Mock 모드가 활성화되어 있으면 로컬 데이터 사용
+  if (mockEnabled) {
+    return inboxDocuments as DocumentListItem[]
+  }
+  
+  // 백엔드 API에서 데이터 가져오기
+  try {
+    return await fetchInboxDocuments()
+  } catch (error) {
+    console.error('Failed to fetch inbox documents from backend:', error)
     return []
   }
-  return inboxDocuments as DocumentListItem[]
 }
 
 export const docTypeLabelMap: Record<DocumentType, string> = {

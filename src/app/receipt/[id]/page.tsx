@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
-import { FileText, Copy, Printer, ArrowLeft } from 'lucide-react'
-import { getReceiptById } from '@/lib/receiptStorage'
+import { useParams, useRouter } from 'next/navigation'
+import { FileText, Copy, Printer, Trash2, X } from 'lucide-react'
+import { getReceiptById, deleteReceipt } from '@/lib/receiptStorage'
 import { Receipt } from '@/lib/receiptTypes'
 
 const buildTemplate = (receipt: Receipt, type: 'optout' | 'inquiry' | 'delete') => {
@@ -19,9 +19,11 @@ const buildTemplate = (receipt: Receipt, type: 'optout' | 'inquiry' | 'delete') 
 
 export default function ReceiptDetailPage() {
   const params = useParams<{ id: string }>()
+  const router = useRouter()
   const [receipt, setReceipt] = useState<Receipt | null>(null)
   const [activeTemplate, setActiveTemplate] = useState<'optout' | 'inquiry' | 'delete'>('optout')
   const [copied, setCopied] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   useEffect(() => {
     if (!params?.id) {
@@ -63,6 +65,20 @@ export default function ReceiptDetailPage() {
     window.print()
   }
 
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (!receipt) return
+    deleteReceipt(receipt.id)
+    router.push('/ingest')
+  }
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false)
+  }
+
   if (!receipt) {
     return (
       <main className="min-h-screen bg-[#f6f1e8]">
@@ -84,12 +100,21 @@ export default function ReceiptDetailPage() {
   return (
     <main className="min-h-screen bg-[#f6f1e8]">
       <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-12">
-        <Link
-          href="/ingest"
-          className="text-sm font-semibold text-[#de3f1c] hover:underline"
-        >
-          ← Ingest로 돌아가기
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link
+            href="/ingest"
+            className="text-sm font-semibold text-[#de3f1c] hover:underline"
+          >
+            ← Ingest로 돌아가기
+          </Link>
+          <button
+            onClick={handleDeleteClick}
+            className="flex items-center gap-2 rounded-2xl border border-[#f1b59f] bg-[#ffe0cc] px-4 py-2 text-sm font-semibold text-[#b23b1e] transition hover:bg-[#ffd4b3]"
+          >
+            <Trash2 className="h-4 w-4" />
+            삭제
+          </button>
+        </div>
 
         <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
           <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
@@ -237,6 +262,39 @@ export default function ReceiptDetailPage() {
           </div>
         </section>
       </div>
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_20px_50px_rgba(15,11,9,0.3)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[#1b1410]">영수증 삭제</h3>
+              <button
+                onClick={handleDeleteCancel}
+                className="rounded-lg p-1 text-[#6b5a4b] transition hover:bg-[#fffaf4]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-sm text-[#6b5a4b] mb-6">
+              이 영수증을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteCancel}
+                className="flex-1 rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="flex-1 rounded-2xl bg-[#b23b1e] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#9a3219]"
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

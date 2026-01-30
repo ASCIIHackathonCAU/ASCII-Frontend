@@ -37,3 +37,10 @@ export const saveReceipt = (receipt: Receipt) => {
 export const replaceReceipts = (receipts: Receipt[]) => {
   writeStorage(receipts)
 }
+
+export const deleteReceipt = (id: string) => {
+  const receipts = readStorage()
+  const filtered = receipts.filter((item) => item.id !== id)
+  writeStorage(filtered)
+  return filtered
+}
