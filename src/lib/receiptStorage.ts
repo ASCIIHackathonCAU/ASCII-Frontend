@@ -1,7 +1,8 @@
 import { backend } from './api/client'
 import { Receipt } from './receiptTypes'
 
-const mockEnabled = process.env.NEXT_PUBLIC_MOCK === 'true'
+// Treat any case-insensitive "true" as enabling mock mode. Default is backend.
+const mockEnabled = (process.env.NEXT_PUBLIC_MOCK || '').toLowerCase() === 'true'
 const STORAGE_KEY = 'receiptos.receipts'
 
 // ============================================================================
@@ -50,16 +51,31 @@ export const getReceipts = (): Receipt[] => {
  * ID로 영수증을 가져옵니다.
  */
 export const getReceiptById = async (id: string): Promise<Receipt | null> => {
+  // 1) Try mock/localStorage first (for offline demo mode)
   if (mockEnabled) {
-    return readStorage().find((item) => item.id === id) ?? null
+    const found = readStorage().find((item) => item.id === id)
+    if (found) return found
+    // In mock mode but nothing in storage → fall back to backend so
+    // dummy receipts seeded by the backend can still be viewed.
+    console.warn(`[receiptStorage] Receipt ${id} not found in mock storage. Falling back to backend.`)
   }
 
+  // 2) Backend fallback (default path)
   try {
+    console.log('Fetching receipt from backend:', id)
     const response = await backend.get(`/api/receipts/${id}`)
+    console.log('Receipt response:', response.data)
+    
     // 백엔드 Receipt를 Frontend Receipt로 변환
-    return transformBackendReceiptToFrontendReceipt(response.data)
-  } catch (error) {
+    const receipt = transformBackendReceiptToFrontendReceipt(response.data)
+    console.log('Transformed receipt:', receipt)
+    return receipt
+  } catch (error: any) {
     console.error(`Failed to fetch receipt ${id}:`, error)
+    if (error.response) {
+      console.error('Response status:', error.response.status)
+      console.error('Response data:', error.response.data)
+    }
     return null
   }
 }
@@ -90,18 +106,27 @@ export const replaceReceipts = (receipts: Receipt[]): void => {
  * 영수증을 삭제합니다.
  */
 export const deleteReceipt = async (id: string): Promise<void> => {
-  if (mockEnabled) {
+  const removeFromLocal = () => {
     const receipts = readStorage()
     const filtered = receipts.filter((item) => item.id !== id)
     writeStorage(filtered)
-    return
+  }
+
+  // When mock mode is on we still attempt backend deletion in case
+  // the receipt originated from the backend (dummy data, etc.).
+  if (mockEnabled) {
+    removeFromLocal()
   }
 
   try {
     await backend.delete(`/api/receipts/${id}`)
   } catch (error) {
-    console.error(`Failed to delete receipt ${id}:`, error)
-    throw error
+    // If mock mode only and backend fails, we already removed locally.
+    if (!mockEnabled) {
+      console.error(`Failed to delete receipt ${id}:`, error)
+      throw error
+    }
+    console.warn(`[receiptStorage] Backend delete failed in mock mode for ${id}:`, error)
   }
 }
 

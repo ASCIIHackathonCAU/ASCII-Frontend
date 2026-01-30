@@ -30,15 +30,32 @@ export default function ReceiptDetailPage() {
       return
     }
     loadReceipt()
-  }, [params])
+  }, [params?.id])
 
   const loadReceipt = async () => {
-    if (!params?.id) return
+    if (!params?.id) {
+      console.error('No receipt ID in params')
+      return
+    }
+    const receiptId = params.id
+    console.log('Loading receipt:', receiptId)
     try {
-      const found = await getReceiptById(params.id)
+      const found = await getReceiptById(receiptId)
+      if (!found) {
+        console.error('Receipt not found:', receiptId)
+        // 영수증을 찾을 수 없으면 null로 설정하여 에러 메시지 표시
+        setReceipt(null)
+        return
+      }
+      console.log('Receipt loaded successfully:', found)
       setReceipt(found)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load receipt:', error)
+      if (error.response) {
+        console.error('Response status:', error.response.status)
+        console.error('Response data:', error.response.data)
+      }
+      setReceipt(null)
     }
   }
 
@@ -82,9 +99,15 @@ export default function ReceiptDetailPage() {
     if (!receipt) return
     try {
       await deleteReceipt(receipt.id)
-      router.push('/ingest')
+      // 이전 페이지로 돌아가기 (동의 대시보드에서 왔다면 그곳으로)
+      if (document.referrer && document.referrer.includes('/consent-dashboard')) {
+        router.push('/consent-dashboard')
+      } else {
+        router.push('/ingest')
+      }
     } catch (error) {
       console.error('Failed to delete receipt:', error)
+      alert('영수증 삭제에 실패했습니다.')
     }
   }
 
@@ -97,10 +120,10 @@ export default function ReceiptDetailPage() {
       <main className="min-h-screen bg-[#f6f1e8]">
         <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-12">
           <Link
-            href="/ingest"
+            href="/consent-dashboard"
             className="text-sm font-semibold text-[#de3f1c] hover:underline"
           >
-            ← Ingest로 돌아가기
+            ← 동의 관리 대시보드로 돌아가기
           </Link>
           <div className="rounded-3xl border border-[#e4d4c3] bg-white p-6 text-sm text-[#6b5a4b]">
             영수증을 찾을 수 없습니다.
@@ -115,10 +138,10 @@ export default function ReceiptDetailPage() {
       <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-12">
         <div className="flex items-center justify-between">
           <Link
-            href="/ingest"
+            href="/consent-dashboard"
             className="text-sm font-semibold text-[#de3f1c] hover:underline"
           >
-            ← Ingest로 돌아가기
+            ← 동의 관리 대시보드로 돌아가기
           </Link>
           <button
             onClick={handleDeleteClick}

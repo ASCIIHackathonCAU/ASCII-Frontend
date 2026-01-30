@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Upload, BarChart3, BookOpen, Shield, FileText, Info, Cookie } from 'lucide-react'
+import { Upload, BarChart3, BookOpen, Shield, FileText, Info, Cookie, Mail } from 'lucide-react'
 import { listCookieReceipts, generateDummyCookieReceipts, createCookieReceipt } from '@/lib/cookieClient'
 import { CookieReceipt } from '@/lib/cookieTypes'
 
@@ -89,6 +89,68 @@ export default function Home() {
               <li className="flex items-start gap-2">
                 <span className="text-[#de3f1c] font-bold">•</span>
                 <span>영수증 자동 생성</span>
+              </li>
+            </ul>
+          </Link>
+
+          <Link
+            href="/consent-dashboard"
+            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="rounded-xl bg-[#fff4e6] p-4">
+                <Mail className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+              </div>
+              <h2 className="text-3xl font-bold text-[#1b1410]">
+                동의 관리 대시보드
+              </h2>
+            </div>
+            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
+              이메일에서 동의 관련 메일을 자동으로 수집하고 관리합니다.
+            </p>
+            <ul className="space-y-2 text-base text-[#2d241f]">
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>메일 API 연동 (Gmail/Outlook)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>동의 메일 자동 분류</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>분야별 동의 이력 확인</span>
+              </li>
+            </ul>
+          </Link>
+
+          <Link
+            href="/revocation"
+            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="rounded-xl bg-[#fff4e6] p-4">
+                <FileText className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
+              </div>
+              <h2 className="text-3xl font-bold text-[#1b1410]">
+                철회/삭제 요청
+              </h2>
+            </div>
+            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
+              개인정보 삭제, 동의 철회, 제3자 제공 중단 등을 요청합니다.
+            </p>
+            <ul className="space-y-2 text-base text-[#2d241f]">
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>요청서 자동 생성</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>기관별 제출 경로 안내</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>요청 상태 추적</span>
               </li>
             </ul>
           </Link>
