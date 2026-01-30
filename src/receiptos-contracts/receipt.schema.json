@@ -55,6 +55,36 @@
           "why": { "type": "string" }
         }
       }
+    },
+    "required_items": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "optional_items": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "over_collection": { "type": "boolean" },
+    "over_collection_reasons": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "transfers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "destination", "is_overseas", "data_items"],
+        "properties": {
+          "type": { "type": "string" },
+          "destination": { "type": "string" },
+          "is_overseas": { "type": "boolean" },
+          "data_items": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
     }
   }
 }

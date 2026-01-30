@@ -2,10 +2,9 @@ import { Receipt } from '@/lib/receiptTypes'
 import type { DocumentListItem, DocumentRiskLevel, DocumentType } from '@/lib/inboxData'
 
 /**
- * Receipt 타입을 DocumentListItem으로 변환
+ * Receipt 객체를 DocumentListItem으로 변환
  */
 export function receiptToDocumentListItem(receipt: Receipt): DocumentListItem {
-  // doc_type 매핑
   const docTypeMap: Record<string, DocumentType> = {
     CONSENT: 'CONSENT_FORM',
     PRIVACY_CHANGE: 'POLICY_UPDATE',
@@ -14,7 +13,6 @@ export function receiptToDocumentListItem(receipt: Receipt): DocumentListItem {
   }
   const docType: DocumentType = docTypeMap[receipt.doc_type] || 'POLICY_UPDATE'
 
-  // 위험도 계산
   const riskLevel = calculateRiskLevel(receipt)
 
   return {
@@ -31,35 +29,28 @@ export function receiptToDocumentListItem(receipt: Receipt): DocumentListItem {
 }
 
 /**
- * Receipt의 위험도 계산
+ * Receipt 기반 위험도 계산
  */
 function calculateRiskLevel(receipt: Receipt): DocumentRiskLevel {
-  // 고위험 조건 체크
-  const hasHighRiskIndicators =
-    receipt.data_items?.some((item) =>
-      item.toLowerCase().includes('otp') ||
-      item.toLowerCase().includes('계좌') ||
-      item.toLowerCase().includes('주민번호')
-    ) ||
-    receipt.summary?.toLowerCase().includes('otp') ||
-    receipt.summary?.toLowerCase().includes('계좌번호')
+  const lowerSummary = (receipt.summary || '').toLowerCase()
+  const sensitiveHit =
+    receipt.over_collection ||
+    receipt.data_items?.some((item) => {
+      const lower = item.toLowerCase()
+      return lower.includes('otp') || lower.includes('계좌') || lower.includes('주민') || lower.includes('비밀번호')
+    }) ||
+    lowerSummary.includes('otp') ||
+    lowerSummary.includes('계좌')
 
-  if (hasHighRiskIndicators) {
-    return 'HIGH'
-  }
+  if (sensitiveHit) return 'HIGH'
 
-  // 중위험 조건 체크
-  const hasMediumRiskIndicators =
+  const mediumHit =
     (receipt.retention_days && receipt.retention_days >= 365) ||
     (receipt.third_party_services && receipt.third_party_services.length > 0) ||
+    (receipt.transfers && receipt.transfers.some((t) => t.is_overseas)) ||
     !receipt.revoke_path ||
-    receipt.revoke_path.includes('Needs') ||
-    receipt.revoke_path.includes('명확화')
+    (receipt.revoke_path && receipt.revoke_path.toLowerCase().includes('need'))
 
-  if (hasMediumRiskIndicators) {
-    return 'MED'
-  }
-
-  return 'LOW'
+  return mediumHit ? 'MED' : 'LOW'
 }
 

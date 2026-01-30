@@ -6,17 +6,13 @@ const mockEnabled = (process.env.NEXT_PUBLIC_MOCK || '').toLowerCase() === 'true
 const STORAGE_KEY = 'receiptos.receipts'
 
 // ============================================================================
-// Mock 모드용 localStorage 함수들
+// Mock mode helpers (localStorage)
 // ============================================================================
 
 const readStorage = (): Receipt[] => {
-  if (typeof window === 'undefined') {
-    return []
-  }
+  if (typeof window === 'undefined') return []
   const raw = window.localStorage.getItem(STORAGE_KEY)
-  if (!raw) {
-    return []
-  }
+  if (!raw) return []
   try {
     return JSON.parse(raw) as Receipt[]
   } catch {
@@ -25,9 +21,7 @@ const readStorage = (): Receipt[] => {
 }
 
 const writeStorage = (receipts: Receipt[]) => {
-  if (typeof window === 'undefined') {
-    return
-  }
+  if (typeof window === 'undefined') return
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(receipts))
 }
 
@@ -35,44 +29,27 @@ const writeStorage = (receipts: Receipt[]) => {
 // Public API
 // ============================================================================
 
-/**
- * 영수증 목록을 가져옵니다.
- */
+/** Return receipt list (mock-only; backend callers should use receiptClient). */
 export const getReceipts = (): Receipt[] => {
-  if (mockEnabled) {
-    return readStorage()
-  }
-  // 백엔드 모드에서는 receiptClient.listReceipts()를 사용해야 합니다.
-  // 이 함수는 Mock 모드에서만 사용됩니다.
+  if (mockEnabled) return readStorage()
   return []
 }
 
-/**
- * ID로 영수증을 가져옵니다.
- */
+/** Fetch single receipt by id (mock first, then backend). */
 export const getReceiptById = async (id: string): Promise<Receipt | null> => {
-  // 1) Try mock/localStorage first (for offline demo mode)
   if (mockEnabled) {
     const found = readStorage().find((item) => item.id === id)
     if (found) return found
-    // In mock mode but nothing in storage → fall back to backend so
-    // dummy receipts seeded by the backend can still be viewed.
-    console.warn(`[receiptStorage] Receipt ${id} not found in mock storage. Falling back to backend.`)
+    console.warn(`[receiptStorage] Receipt ${id} not found locally; falling back to backend.`)
   }
 
-  // 2) Backend fallback (default path)
   try {
-    console.log('Fetching receipt from backend:', id)
     const response = await backend.get(`/api/receipts/${id}`)
-    console.log('Receipt response:', response.data)
-    
-    // 백엔드 Receipt를 Frontend Receipt로 변환
     const receipt = transformBackendReceiptToFrontendReceipt(response.data)
-    console.log('Transformed receipt:', receipt)
     return receipt
   } catch (error: any) {
     console.error(`Failed to fetch receipt ${id}:`, error)
-    if (error.response) {
+    if (error?.response) {
       console.error('Response status:', error.response.status)
       console.error('Response data:', error.response.data)
     }
@@ -80,40 +57,26 @@ export const getReceiptById = async (id: string): Promise<Receipt | null> => {
   }
 }
 
-/**
- * 영수증을 저장합니다.
- */
+/** Save receipt (mock only). */
 export const saveReceipt = (receipt: Receipt): void => {
-  if (mockEnabled) {
-    const receipts = readStorage()
-    writeStorage([receipt, ...receipts])
-  }
-  // 백엔드 모드에서는 createReceiptFromText가 이미 저장하므로
-  // 이 함수는 Mock 모드에서만 사용됩니다.
+  if (!mockEnabled) return
+  const receipts = readStorage()
+  writeStorage([receipt, ...receipts])
 }
 
-/**
- * 영수증 목록을 교체합니다.
- */
+/** Replace receipt list (mock only). */
 export const replaceReceipts = (receipts: Receipt[]): void => {
-  if (mockEnabled) {
-    writeStorage(receipts)
-  }
-  // 백엔드 모드에서는 사용되지 않습니다.
+  if (!mockEnabled) return
+  writeStorage(receipts)
 }
 
-/**
- * 영수증을 삭제합니다.
- */
+/** Delete a receipt by id (mock + backend). */
 export const deleteReceipt = async (id: string): Promise<void> => {
   const removeFromLocal = () => {
-    const receipts = readStorage()
-    const filtered = receipts.filter((item) => item.id !== id)
-    writeStorage(filtered)
+    const receipts = readStorage().filter((item) => item.id !== id)
+    writeStorage(receipts)
   }
 
-  // When mock mode is on we still attempt backend deletion in case
-  // the receipt originated from the backend (dummy data, etc.).
   if (mockEnabled) {
     removeFromLocal()
   }
@@ -121,7 +84,6 @@ export const deleteReceipt = async (id: string): Promise<void> => {
   try {
     await backend.delete(`/api/receipts/${id}`)
   } catch (error) {
-    // If mock mode only and backend fails, we already removed locally.
     if (!mockEnabled) {
       console.error(`Failed to delete receipt ${id}:`, error)
       throw error
@@ -131,18 +93,14 @@ export const deleteReceipt = async (id: string): Promise<void> => {
 }
 
 // ============================================================================
-// 백엔드 Receipt를 Frontend Receipt로 변환
+// Backend -> Frontend transformation
 // ============================================================================
 
-function transformBackendReceiptToFrontendReceipt(backendReceipt: any): Receipt {
+export function transformBackendReceiptToFrontendReceipt(backendReceipt: any): Receipt {
   const sevenLines = backendReceipt.seven_lines || {}
   const signals = backendReceipt.signals || []
-  
-  // 위험도 계산
-  const hasHighRisk = signals.some((s: any) => s.severity === 'high')
-  const hasMediumRisk = signals.some((s: any) => s.severity === 'medium')
-  
-  // doc_type 매핑
+  const fields = backendReceipt.fields || {}
+
   const docTypeMap: Record<string, string> = {
     consent: 'CONSENT',
     change: 'PRIVACY_CHANGE',
@@ -152,20 +110,22 @@ function transformBackendReceiptToFrontendReceipt(backendReceipt: any): Receipt 
   }
   const docType = docTypeMap[backendReceipt.document_type] || 'NOTICE'
 
-  // 카테고리 추정
-  const category = inferCategory(backendReceipt.fields || {})
+  const category = inferCategory(fields)
+  const retentionDays = inferRetentionDays(fields)
 
-  // retention_days 계산
-  const retentionDays = inferRetentionDays(backendReceipt.fields || {})
+  const dataItems = extractDataItems(fields)
+  const requiredItems = backendReceipt.required_items || extractRequiredItems(fields)
+  const optionalItems = backendReceipt.optional_items || extractOptionalItems(fields)
+  const thirdPartyServices = extractThirdPartyServices(fields)
+  const transfers = backendReceipt.transfers || extractTransfers(fields, dataItems)
 
-  // data_items 추출
-  const dataItems = extractDataItems(backendReceipt.fields || {})
+  const overCollection =
+    backendReceipt.over_collection || signals.some((s: any) => s.signal_id === 'over_collection_risk')
+  const overCollectionReasons =
+    backendReceipt.over_collection_reasons ||
+    signals.filter((s: any) => s.signal_id === 'over_collection_risk').map((s: any) => s.title)
 
-  // third_party_services 추출
-  const thirdPartyServices = extractThirdPartyServices(backendReceipt.fields || {})
-
-  // evidence 변환
-  const evidence = transformEvidence(backendReceipt.fields || {}, signals)
+  const evidence = transformEvidence(fields, signals)
 
   return {
     id: backendReceipt.receipt_id,
@@ -179,6 +139,11 @@ function transformBackendReceiptToFrontendReceipt(backendReceipt: any): Receipt 
     revoke_path: sevenLines.how_to_revoke || null,
     third_party_services: thirdPartyServices,
     data_items: dataItems,
+    required_items: requiredItems.length > 0 ? requiredItems : dataItems,
+    optional_items: optionalItems,
+    over_collection: overCollection,
+    over_collection_reasons: overCollectionReasons || [],
+    transfers: transfers,
     summary: sevenLines.risk_summary || sevenLines.what || 'No summary',
     evidence: evidence,
   }
@@ -195,13 +160,15 @@ function inferCategory(fields: any): string {
 }
 
 function inferRetentionDays(fields: any): number {
-  const retentionField = fields.retention_period || fields.보관기간
+  const retentionField = fields.retention || fields.retention_period || fields.보유기간
   if (!retentionField) return 0
-  
+
   const value = retentionField.value
   if (typeof value === 'string') {
     const daysMatch = value.match(/(\d+)\s*일/)
     if (daysMatch) return parseInt(daysMatch[1])
+    const monthsMatch = value.match(/(\d+)\s*개월/)
+    if (monthsMatch) return parseInt(monthsMatch[1]) * 30
     const yearsMatch = value.match(/(\d+)\s*년/)
     if (yearsMatch) return parseInt(yearsMatch[1]) * 365
   }
@@ -210,7 +177,7 @@ function inferRetentionDays(fields: any): number {
 
 function extractDataItems(fields: any): string[] {
   const items: string[] = []
-  const dataItemsField = fields.data_items || fields.수집항목
+  const dataItemsField = fields.data_collected || fields.data_items || fields.수집항목
   if (dataItemsField) {
     const value = dataItemsField.value
     if (Array.isArray(value)) {
@@ -222,9 +189,37 @@ function extractDataItems(fields: any): string[] {
   return items.length > 0 ? items : ['Unclassified']
 }
 
+function extractRequiredItems(fields: any): string[] {
+  const items: string[] = []
+  const field = fields.required_items || fields.필수항목
+  if (field) {
+    const value = field.value
+    if (Array.isArray(value)) {
+      items.push(...value)
+    } else if (typeof value === 'string') {
+      items.push(value)
+    }
+  }
+  return items
+}
+
+function extractOptionalItems(fields: any): string[] {
+  const items: string[] = []
+  const field = fields.optional_items || fields.선택항목
+  if (field) {
+    const value = field.value
+    if (Array.isArray(value)) {
+      items.push(...value)
+    } else if (typeof value === 'string') {
+      items.push(value)
+    }
+  }
+  return items
+}
+
 function extractThirdPartyServices(fields: any): string[] {
   const services: string[] = []
-  const thirdPartyField = fields.third_party || fields.제3자제공
+  const thirdPartyField = fields.third_party || fields['제3자제공']
   if (thirdPartyField) {
     const value = thirdPartyField.value
     if (Array.isArray(value)) {
@@ -233,12 +228,46 @@ function extractThirdPartyServices(fields: any): string[] {
       services.push(value)
     }
   }
+  const overseasField = fields.overseas_transfer || fields['국외이전']
+  if (overseasField) {
+    const value = overseasField.value
+    const list = Array.isArray(value) ? value : value ? [value] : []
+    list.forEach((v: string) => services.push(`(국외) ${v}`))
+  }
   return services
 }
 
-function transformEvidence(fields: any, signals: any[]): Array<{ field: string; quote: string; why: string }> {
+function extractTransfers(
+  fields: any,
+  dataItems: string[],
+): Array<{ type: string; destination: string; is_overseas: boolean; data_items: string[] }> {
+  const transfers: Array<{ type: string; destination: string; is_overseas: boolean; data_items: string[] }> = []
+  const pushTransfer = (field: any, type: string, is_overseas = false) => {
+    if (!field) return
+    const value = field.value
+    const list = Array.isArray(value) ? value : value ? [value] : []
+    list.forEach((dest: string) => {
+      transfers.push({
+        type,
+        destination: dest,
+        is_overseas,
+        data_items: dataItems,
+      })
+    })
+  }
+  pushTransfer(fields.third_party || fields['제3자제공'], 'third_party', false)
+  pushTransfer(fields.outsourcing || fields['위탁'], 'outsourcing', false)
+  pushTransfer(fields.overseas_transfer || fields['국외이전'], 'overseas', true)
+  pushTransfer(fields.data_transfers || fields['전송'], 'transfer', false)
+  return transfers
+}
+
+function transformEvidence(
+  fields: any,
+  signals: any[],
+): Array<{ field: string; quote: string; why: string }> {
   const evidence: Array<{ field: string; quote: string; why: string }> = []
-  
+
   for (const [fieldName, fieldData] of Object.entries(fields)) {
     const field = fieldData as any
     if (field.evidence && field.evidence.length > 0) {
@@ -264,11 +293,13 @@ function transformEvidence(fields: any, signals: any[]): Array<{ field: string; 
     }
   })
 
-  return evidence.length > 0 ? evidence : [
-    {
-      field: 'summary',
-      quote: 'No evidence extracted',
-      why: 'No evidence found in document',
-    },
-  ]
+  return evidence.length > 0
+    ? evidence
+    : [
+        {
+          field: 'summary',
+          quote: 'No evidence extracted',
+          why: 'No evidence found in document',
+        },
+      ]
 }
