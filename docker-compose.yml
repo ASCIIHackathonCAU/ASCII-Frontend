@@ -11,6 +11,7 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_BACKEND_URL=http://host.docker.internal:8000
+      - NEXT_PUBLIC_MOCK=true
     volumes:
       - ./src:/app/src
       - ./public:/app/public
