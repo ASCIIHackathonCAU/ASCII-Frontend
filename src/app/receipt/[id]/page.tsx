@@ -3,17 +3,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { FileText, Copy, Printer, ArrowLeft } from 'lucide-react'
 import { getReceiptById } from '@/lib/receiptStorage'
 import { Receipt } from '@/lib/receiptTypes'
 
 const buildTemplate = (receipt: Receipt, type: 'optout' | 'inquiry' | 'delete') => {
   if (type === 'optout') {
-    return `Hello ${receipt.entity_name},\n\nI would like to opt out of marketing messages for ${receipt.service_name}.\nChannels: Email/SMS/App\nDocument: ${receipt.doc_type}\n\nThank you.`
+    return `안녕하세요 ${receipt.entity_name}님,\n\n${receipt.service_name}의 마케팅 메시지 수신을 거부하고자 합니다.\n채널: 이메일/SMS/앱\n문서: ${receipt.doc_type}\n\n감사합니다.`
   }
   if (type === 'inquiry') {
-    return `Hello ${receipt.entity_name},\n\nI am requesting details about data handling for ${receipt.service_name}.\nRetention: ${receipt.retention}\nThird-party sharing: ${receipt.third_party_services.join(', ') || 'None'}\nRevoke path: ${receipt.revoke_path ?? 'Needs clarification'}\n\nPlease reply with details.`
+    return `안녕하세요 ${receipt.entity_name}님,\n\n${receipt.service_name}의 데이터 처리에 대한 상세 정보를 요청드립니다.\n보관 기간: ${receipt.retention}\n제3자 제공: ${receipt.third_party_services?.join(', ') || '없음'}\n철회 경로: ${receipt.revoke_path ?? '명확화 필요'}\n\n상세 정보를 회신해 주시기 바랍니다.`
   }
-  return `Hello ${receipt.entity_name},\n\nPlease delete or rectify my personal data for ${receipt.service_name}.\nRequested items: ${receipt.data_items.join(', ')}\nDocument: ${receipt.doc_type}\n\nPlease confirm once completed.`
+  return `안녕하세요 ${receipt.entity_name}님,\n\n${receipt.service_name}의 개인정보 삭제 또는 정정을 요청드립니다.\n요청 항목: ${receipt.data_items?.join(', ') || '전체'}\n문서: ${receipt.doc_type}\n\n완료 후 확인 부탁드립니다.`
 }
 
 export default function ReceiptDetailPage() {
@@ -26,14 +27,19 @@ export default function ReceiptDetailPage() {
     if (!params?.id) {
       return
     }
-    setReceipt(getReceiptById(params.id))
+    const found = getReceiptById(params.id)
+    setReceipt(found)
   }, [params])
 
   const templateText = useMemo(() => {
     if (!receipt) {
       return ''
     }
-    return buildTemplate(receipt, activeTemplate)
+    try {
+      return buildTemplate(receipt, activeTemplate)
+    } catch {
+      return ''
+    }
   }, [receipt, activeTemplate])
 
   const handleCopy = async () => {
@@ -41,8 +47,13 @@ export default function ReceiptDetailPage() {
     if (!templateText) {
       return
     }
-    await navigator.clipboard.writeText(templateText)
-    setCopied(true)
+    try {
+      await navigator.clipboard.writeText(templateText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard API 실패 시 무시
+    }
   }
 
   const handlePrint = () => {
@@ -54,86 +65,175 @@ export default function ReceiptDetailPage() {
 
   if (!receipt) {
     return (
-      <main className="flex min-h-screen flex-col items-center p-24">
-        <div className="w-full max-w-3xl space-y-4">
-          <Link href="/ingest" className="text-xs text-gray-500 underline">
-            <- Back to Ingest
+      <main className="min-h-screen bg-[#f6f1e8]">
+        <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-12">
+          <Link
+            href="/ingest"
+            className="text-sm font-semibold text-[#de3f1c] hover:underline"
+          >
+            ← Ingest로 돌아가기
           </Link>
-          <p className="text-sm text-gray-500">Receipt not found.</p>
+          <div className="rounded-3xl border border-[#e4d4c3] bg-white p-6 text-sm text-[#6b5a4b]">
+            영수증을 찾을 수 없습니다.
+          </div>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <div className="w-full max-w-3xl space-y-8">
-        <Link href="/ingest" className="text-xs text-gray-500 underline">
-          <- Back to Ingest
+    <main className="min-h-screen bg-[#f6f1e8]">
+      <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-12">
+        <Link
+          href="/ingest"
+          className="text-sm font-semibold text-[#de3f1c] hover:underline"
+        >
+          ← Ingest로 돌아가기
         </Link>
 
-        <section className="space-y-3 rounded-lg border border-gray-200 bg-white p-6">
-          <h1 className="text-2xl font-semibold">{receipt.service_name}</h1>
-          <p className="text-sm text-gray-500">{receipt.summary}</p>
-          <div className="space-y-2 text-sm">
-            <div>1. Service: {receipt.service_name}</div>
-            <div>2. Entity: {receipt.entity_name}</div>
-            <div>3. Document type: {receipt.doc_type}</div>
-            <div>4. Received: {new Date(receipt.received_at).toLocaleString('en-US')}</div>
-            <div>5. Data items: {receipt.data_items.join(', ')}</div>
-            <div>6. Retention: {receipt.retention}</div>
-            <div>7. Revoke path: {receipt.revoke_path ?? 'Needs clarification'}</div>
+        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
+            <FileText className="h-4 w-4 text-[#de3f1c]" />
+            영수증 상세
+          </div>
+          <p className="mt-2 text-xs text-[#6b5a4b]">
+            생성된 영수증의 상세 정보를 확인합니다.
+          </p>
+
+          <div className="mt-6 space-y-4">
+            <div>
+              <h1 className="text-2xl font-semibold text-[#1b1410]">{receipt.service_name}</h1>
+              <p className="mt-2 text-sm text-[#6b5a4b]">{receipt.summary}</p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b]">
+                <p className="font-semibold text-[#1b1410]">서비스명</p>
+                <p className="mt-2">{receipt.service_name}</p>
+              </div>
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b]">
+                <p className="font-semibold text-[#1b1410]">기관명</p>
+                <p className="mt-2">{receipt.entity_name}</p>
+              </div>
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b]">
+                <p className="font-semibold text-[#1b1410]">문서 타입</p>
+                <p className="mt-2">{receipt.doc_type}</p>
+              </div>
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b]">
+                <p className="font-semibold text-[#1b1410]">수신 일자</p>
+                <p className="mt-2">
+                  {receipt.received_at
+                    ? new Date(receipt.received_at).toLocaleString('ko-KR')
+                    : '알 수 없음'}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b]">
+                <p className="font-semibold text-[#1b1410]">수집 항목</p>
+                <p className="mt-2">{receipt.data_items?.join(', ') || '없음'}</p>
+              </div>
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b]">
+                <p className="font-semibold text-[#1b1410]">보관 기간</p>
+                <p className="mt-2">{receipt.retention || '명시되지 않음'}</p>
+              </div>
+              <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-xs text-[#6b5a4b] md:col-span-2">
+                <p className="font-semibold text-[#1b1410]">철회 경로</p>
+                <p className="mt-2">{receipt.revoke_path || '명확화 필요'}</p>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="space-y-3 rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-base font-semibold">Evidence Highlights</h2>
-          <ul className="space-y-2 text-sm">
-            {receipt.evidence.map((item, index) => (
-              <li key={`${item.field}-${index}`} className="rounded-md border border-gray-200 p-3">
-                <p className="font-semibold">{item.field}</p>
-                <p className="text-gray-600">"{item.quote}"</p>
-                <p className="text-xs text-gray-500">{item.why}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {receipt.evidence && receipt.evidence.length > 0 && (
+          <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
+            <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
+              <FileText className="h-4 w-4 text-[#de3f1c]" />
+              증거 하이라이트
+            </div>
+            <p className="mt-2 text-xs text-[#6b5a4b]">
+              추출된 증거 문구를 확인합니다.
+            </p>
 
-        <section className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-base font-semibold">Action Templates</h2>
-          <div className="flex flex-wrap gap-2 text-xs">
-            <button
-              onClick={() => setActiveTemplate('optout')}
-              className={`rounded-md border px-3 py-2 ${activeTemplate === 'optout' ? 'border-black' : 'border-gray-200'}`}
-            >
-              Opt-out
-            </button>
-            <button
-              onClick={() => setActiveTemplate('inquiry')}
-              className={`rounded-md border px-3 py-2 ${activeTemplate === 'inquiry' ? 'border-black' : 'border-gray-200'}`}
-            >
-              Inquiry
-            </button>
-            <button
-              onClick={() => setActiveTemplate('delete')}
-              className={`rounded-md border px-3 py-2 ${activeTemplate === 'delete' ? 'border-black' : 'border-gray-200'}`}
-            >
-              Delete/Rectify
-            </button>
+            <ul className="mt-6 space-y-3">
+              {receipt.evidence.map((item, index) => (
+                <li
+                  key={`${item.field}-${index}`}
+                  className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4"
+                >
+                  <p className="text-sm font-semibold text-[#1b1410]">{item.field}</p>
+                  <p className="mt-2 text-sm text-[#6b5a4b]">"{item.quote}"</p>
+                  <p className="mt-2 text-xs text-[#8b6b53]">{item.why}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
+            <FileText className="h-4 w-4 text-[#de3f1c]" />
+            액션 템플릿
           </div>
-          <textarea
-            readOnly
-            className="h-32 w-full rounded-md border border-gray-200 p-3 text-sm"
-            value={templateText}
-          />
-          <div className="flex flex-wrap items-center gap-3">
-            <button onClick={handleCopy} className="rounded-md bg-black px-4 py-2 text-white">
-              Copy Text
-            </button>
-            <button onClick={handlePrint} className="rounded-md border border-gray-200 px-4 py-2">
-              Print / Save PDF
-            </button>
-            {copied && <span className="text-xs text-green-600">Copied</span>}
+          <p className="mt-2 text-xs text-[#6b5a4b]">
+            요청서 템플릿을 생성하고 복사할 수 있습니다.
+          </p>
+
+          <div className="mt-6 space-y-4">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setActiveTemplate('optout')}
+                className={`rounded-2xl border px-4 py-2 text-xs font-semibold transition ${
+                  activeTemplate === 'optout'
+                    ? 'border-[#de3f1c] bg-[#de3f1c] text-white'
+                    : 'border-[#e4d4c3] bg-white text-[#1b1410] hover:bg-[#fffaf4]'
+                }`}
+              >
+                수신 거부
+              </button>
+              <button
+                onClick={() => setActiveTemplate('inquiry')}
+                className={`rounded-2xl border px-4 py-2 text-xs font-semibold transition ${
+                  activeTemplate === 'inquiry'
+                    ? 'border-[#de3f1c] bg-[#de3f1c] text-white'
+                    : 'border-[#e4d4c3] bg-white text-[#1b1410] hover:bg-[#fffaf4]'
+                }`}
+              >
+                문의
+              </button>
+              <button
+                onClick={() => setActiveTemplate('delete')}
+                className={`rounded-2xl border px-4 py-2 text-xs font-semibold transition ${
+                  activeTemplate === 'delete'
+                    ? 'border-[#de3f1c] bg-[#de3f1c] text-white'
+                    : 'border-[#e4d4c3] bg-white text-[#1b1410] hover:bg-[#fffaf4]'
+                }`}
+              >
+                삭제/정정
+              </button>
+            </div>
+            <textarea
+              readOnly
+              className="h-40 w-full rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-sm text-[#1b1410] focus:border-[#de3f1c] focus:outline-none"
+              value={templateText}
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-2 rounded-2xl bg-[#1b1410] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#2d241f]"
+              >
+                <Copy className="h-4 w-4" />
+                텍스트 복사
+              </button>
+              <button
+                onClick={handlePrint}
+                className="flex items-center gap-2 rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]"
+              >
+                <Printer className="h-4 w-4" />
+                인쇄 / PDF 저장
+              </button>
+              {copied && (
+                <span className="text-xs font-semibold text-[#1e5b3a]">복사되었습니다</span>
+              )}
+            </div>
           </div>
         </section>
       </div>
