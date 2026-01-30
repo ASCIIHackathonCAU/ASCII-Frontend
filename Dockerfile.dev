@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# 의존성 설치
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# 소스 코드 복사
+COPY . .
+
+# public 디렉토리 생성 (없으면)
+RUN mkdir -p ./public || true
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
+
