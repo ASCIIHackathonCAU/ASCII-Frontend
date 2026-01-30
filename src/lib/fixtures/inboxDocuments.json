@@ -1,0 +1,112 @@
+[
+  {
+    "id": "DOC-1001",
+    "title": "네이버클라우드 정책 업데이트 안내",
+    "entity_name": "네이버클라우드",
+    "doc_type": "POLICY_UPDATE",
+    "received_at": "2024-12-12T09:30:00.000Z",
+    "risk_level": "MED",
+    "summary_line": "데이터 보관 기간과 제3자 제공 조항이 변경되었습니다.",
+    "verification_code": "123456",
+    "verification_token": "paseto_v4_public_naverc1"
+  },
+  {
+    "id": "DOC-1002",
+    "title": "모두페이 개인정보 처리방침 개정",
+    "entity_name": "모두페이 주식회사",
+    "doc_type": "POLICY_UPDATE",
+    "received_at": "2024-12-05T11:10:00.000Z",
+    "risk_level": "LOW",
+    "summary_line": "수집 항목 설명이 명확화되었습니다.",
+    "verification_code": "234567",
+    "verification_token": "paseto_v4_public_modupay1"
+  },
+  {
+    "id": "DOC-1003",
+    "title": "스마트클래스 이용약관 변경",
+    "entity_name": "스마트클래스 교육센터",
+    "doc_type": "POLICY_UPDATE",
+    "received_at": "2024-11-28T15:45:00.000Z",
+    "risk_level": "MED",
+    "summary_line": "보관기간 연장 조항이 추가되었습니다.",
+    "verification_code": "345678",
+    "verification_token": "paseto_v4_public_sclass1"
+  },
+  {
+    "id": "DOC-1004",
+    "title": "모두페이 간편결제 동의서",
+    "entity_name": "모두페이 주식회사",
+    "doc_type": "CONSENT_FORM",
+    "received_at": "2024-11-22T08:20:00.000Z",
+    "risk_level": "MED",
+    "summary_line": "이메일, 결제수단 토큰 수집 동의가 포함됩니다.",
+    "verification_code": "456789",
+    "verification_token": "paseto_v4_public_modupay2"
+  },
+  {
+    "id": "DOC-1005",
+    "title": "스마트클래스 수강 동의서",
+    "entity_name": "스마트클래스 교육센터",
+    "doc_type": "CONSENT_FORM",
+    "received_at": "2024-11-20T12:05:00.000Z",
+    "risk_level": "LOW",
+    "summary_line": "학습 기록 수집 목적이 안내되었습니다.",
+    "verification_code": "567890",
+    "verification_token": "paseto_v4_public_sclass2"
+  },
+  {
+    "id": "DOC-1006",
+    "title": "헬스플로우 회원가입 동의",
+    "entity_name": "헬스플로우",
+    "doc_type": "CONSENT_FORM",
+    "received_at": "2024-11-12T10:40:00.000Z",
+    "risk_level": "MED",
+    "summary_line": "건강 정보 수집 항목이 포함되어 있습니다.",
+    "verification_code": "678901",
+    "verification_token": "paseto_v4_public_health1"
+  },
+  {
+    "id": "DOC-1007",
+    "title": "개인정보 삭제 요청 접수 확인",
+    "entity_name": "스마트클래스 교육센터",
+    "doc_type": "DATA_REQUEST",
+    "received_at": "2024-11-10T14:00:00.000Z",
+    "risk_level": "LOW",
+    "summary_line": "삭제 요청이 접수되었습니다. 응답 대기 중입니다.",
+    "verification_code": "789012",
+    "verification_token": "paseto_v4_public_sclass3"
+  },
+  {
+    "id": "DOC-1008",
+    "title": "마케팅 수신거부 요청 확인",
+    "entity_name": "모두페이 주식회사",
+    "doc_type": "DATA_REQUEST",
+    "received_at": "2024-11-09T16:20:00.000Z",
+    "risk_level": "LOW",
+    "summary_line": "마케팅 수신 거부 요청이 접수되었습니다.",
+    "verification_code": "890123",
+    "verification_token": "paseto_v4_public_modupay3"
+  },
+  {
+    "id": "DOC-1009",
+    "title": "제3자 제공 중단 요청 접수",
+    "entity_name": "네이버클라우드",
+    "doc_type": "DATA_REQUEST",
+    "received_at": "2024-11-08T09:15:00.000Z",
+    "risk_level": "MED",
+    "summary_line": "제3자 제공 중단 요청이 등록되었습니다.",
+    "verification_code": "901234",
+    "verification_token": "paseto_v4_public_naverc2"
+  },
+  {
+    "id": "DOC-1010",
+    "title": "본인확인 요청 (OTP/계좌 요구)",
+    "entity_name": "페이링크",
+    "doc_type": "HIGH_RISK_REQUEST",
+    "received_at": "2024-11-06T18:50:00.000Z",
+    "risk_level": "HIGH",
+    "summary_line": "OTP 및 계좌번호 제출 요구가 포함된 고위험 요청입니다.",
+    "verification_code": "111222",
+    "verification_token": "paseto_v4_public_paylink1"
+  }
+]
