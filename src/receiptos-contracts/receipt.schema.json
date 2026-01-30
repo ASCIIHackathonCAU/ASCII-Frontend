@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "service_name",
+    "entity_name",
+    "doc_type",
+    "received_at",
+    "category",
+    "retention",
+    "retention_days",
+    "revoke_path",
+    "third_party_services",
+    "data_items",
+    "summary",
+    "evidence"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "service_name": { "type": "string" },
+    "entity_name": { "type": "string" },
+    "doc_type": {
+      "type": "string",
+      "enum": ["CONSENT", "PRIVACY_CHANGE", "POLICY_UPDATE", "NOTICE"]
+    },
+    "received_at": { "type": "string", "format": "date-time" },
+    "category": {
+      "type": "string",
+      "enum": ["MARKETING", "PAYMENT", "CLOUD", "HEALTH", "EDU", "GENERAL"]
+    },
+    "retention": { "type": "string" },
+    "retention_days": { "type": "number" },
+    "revoke_path": { "type": ["string", "null"] },
+    "third_party_services": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "data_items": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "summary": { "type": "string" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "quote", "why"],
+        "properties": {
+          "field": { "type": "string" },
+          "quote": { "type": "string" },
+          "why": { "type": "string" }
+        }
+      }
+    }
+  }
+}

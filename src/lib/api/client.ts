@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
 
-// 통합 백엔드 클라이언트
+// Unified backend client
 export const backend = axios.create({
   baseURL: BACKEND_URL,
   headers: {
@@ -10,7 +10,7 @@ export const backend = axios.create({
   },
 })
 
-// Backend-A API 클라이언트 (편의용)
+// Backend-A API client (helper)
 export const backendA = axios.create({
   baseURL: `${BACKEND_URL}/api/a`,
   headers: {
@@ -18,7 +18,7 @@ export const backendA = axios.create({
   },
 })
 
-// Backend-B API 클라이언트 (편의용)
+// Backend-B API client (helper)
 export const backendB = axios.create({
   baseURL: `${BACKEND_URL}/api/b`,
   headers: {

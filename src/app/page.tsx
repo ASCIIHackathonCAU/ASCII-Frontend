@@ -9,32 +9,32 @@ export default function Home() {
         
         <div className="grid grid-cols-2 gap-4">
           <Link
-            href="/inbox"
+            href="/ingest"
             className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100"
           >
             <h2 className="mb-3 text-2xl font-semibold">
-              Inbox (A){' '}
+              Ingest{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
             </h2>
             <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Consent & Request Receipt Inbox
+              Paste or upload consent documents
             </p>
           </Link>
 
           <Link
-            href="/eraser"
+            href="/dashboard"
             className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100"
           >
             <h2 className="mb-3 text-2xl font-semibold">
-              Eraser (B){' '}
+              Dashboard{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
             </h2>
             <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Eraser & Revocation Concierge
+              Pattern counts and distribution
             </p>
           </Link>
         </div>

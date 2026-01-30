@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sample-001",
+    "title": "Naver Cloud privacy policy update",
+    "body": "Service: Naver Cloud\nChange: Retention extended to 5 years.\nThird-party sharing: Cloud vendors\nRevoke path: Settings > Privacy > Withdraw consent\nData items: Name, Email, Payment info"
+  },
+  {
+    "id": "sample-002",
+    "title": "ModuPay marketing consent",
+    "body": "Service: ModuPay\nPurpose: Marketing updates\nData items: Email, Phone\nRetention: Until consent withdrawal\nRevoke path: Email request"
+  },
+  {
+    "id": "sample-003",
+    "title": "Healthflow terms update",
+    "body": "Service: Healthflow\nChange: Added health data processing purpose\nRetention: Delete on service termination\nThird-party sharing: None\nRevoke path: Support inquiry"
+  },
+  {
+    "id": "sample-004",
+    "title": "SmartClass consent form",
+    "body": "Service: SmartClass\nPurpose: Online classes\nData items: Name, Email, Learning records\nRetention: 3 years\nThird-party sharing: Analytics partner\nRevoke path: Web form"
+  }
+]

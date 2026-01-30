@@ -1,0 +1,96 @@
+[
+  {
+    "id": "rcpt-001",
+    "service_name": "Naver Cloud",
+    "entity_name": "Naver Cloud Corp",
+    "doc_type": "PRIVACY_CHANGE",
+    "received_at": "2024-12-12T09:30:00.000Z",
+    "category": "CLOUD",
+    "retention": "5 years after account deletion",
+    "retention_days": 1825,
+    "revoke_path": "Settings > Privacy > Withdraw consent",
+    "third_party_services": ["Cloud vendors"],
+    "data_items": ["Name", "Email", "Payment info"],
+    "summary": "Retention extended to 5 years and third-party sharing is included.",
+    "evidence": [
+      {
+        "field": "retention",
+        "quote": "Retention extended to 5 years.",
+        "why": "Extracted from retention change line"
+      },
+      {
+        "field": "third_party_services",
+        "quote": "Third-party sharing: Cloud vendors",
+        "why": "Third-party sharing line"
+      }
+    ]
+  },
+  {
+    "id": "rcpt-002",
+    "service_name": "ModuPay",
+    "entity_name": "ModuPay Inc",
+    "doc_type": "CONSENT",
+    "received_at": "2024-11-22T08:20:00.000Z",
+    "category": "PAYMENT",
+    "retention": "Until consent withdrawal",
+    "retention_days": 365,
+    "revoke_path": "Email request",
+    "third_party_services": [],
+    "data_items": ["Email", "Phone"],
+    "summary": "Marketing consent and data items are explicitly listed.",
+    "evidence": [
+      {
+        "field": "data_items",
+        "quote": "Data items: Email, Phone",
+        "why": "Direct quote of collected items"
+      },
+      {
+        "field": "revoke_path",
+        "quote": "Revoke path: Email request",
+        "why": "Revoke path line"
+      }
+    ]
+  },
+  {
+    "id": "rcpt-003",
+    "service_name": "Healthflow",
+    "entity_name": "Healthflow",
+    "doc_type": "POLICY_UPDATE",
+    "received_at": "2024-11-12T10:40:00.000Z",
+    "category": "HEALTH",
+    "retention": "Delete on service termination",
+    "retention_days": 180,
+    "revoke_path": "Support inquiry",
+    "third_party_services": [],
+    "data_items": ["Health data"],
+    "summary": "Health data processing purpose added.",
+    "evidence": [
+      {
+        "field": "summary",
+        "quote": "Health data processing purpose added",
+        "why": "Summarized from change line"
+      }
+    ]
+  },
+  {
+    "id": "rcpt-004",
+    "service_name": "SmartClass",
+    "entity_name": "SmartClass Center",
+    "doc_type": "CONSENT",
+    "received_at": "2024-11-10T14:00:00.000Z",
+    "category": "EDU",
+    "retention": "3 years",
+    "retention_days": 1095,
+    "revoke_path": "Web form submission",
+    "third_party_services": ["Analytics partner"],
+    "data_items": ["Name", "Email", "Learning records"],
+    "summary": "Consent form for online class operations.",
+    "evidence": [
+      {
+        "field": "data_items",
+        "quote": "Data items: Name, Email, Learning records",
+        "why": "Extracted from data item line"
+      }
+    ]
+  }
+]
