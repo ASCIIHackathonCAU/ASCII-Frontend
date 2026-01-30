@@ -92,5 +92,68 @@
         "why": "Extracted from data item line"
       }
     ]
+  },
+  {
+    "id": "rcpt-005",
+    "service_name": "TripBuddy",
+    "entity_name": "TripBuddy Co",
+    "doc_type": "PRIVACY_CHANGE",
+    "received_at": "2025-03-05T10:15:00.000Z",
+    "category": "GENERAL",
+    "retention": "2 years",
+    "retention_days": 730,
+    "revoke_path": "Settings > Privacy > Delete account",
+    "third_party_services": ["Marketing DSP"],
+    "data_items": ["Name", "Email", "Location history"],
+    "summary": "Location history sharing with DSP added for personalized offers.",
+    "evidence": [
+      {
+        "field": "third_party_services",
+        "quote": "Shared with DSP partners",
+        "why": "Noted in change log"
+      }
+    ]
+  },
+  {
+    "id": "rcpt-006",
+    "service_name": "FitCare",
+    "entity_name": "FitCare Health",
+    "doc_type": "CONSENT",
+    "received_at": "2025-08-18T07:45:00.000Z",
+    "category": "HEALTH",
+    "retention": "Until consent withdrawal",
+    "retention_days": 365,
+    "revoke_path": "Email privacy@fitcare.com",
+    "third_party_services": [],
+    "data_items": ["Heart rate", "Sleep pattern"],
+    "summary": "Health tracking data consent for personalized coaching.",
+    "evidence": [
+      {
+        "field": "data_items",
+        "quote": "Collects heart rate and sleep pattern",
+        "why": "Stated in consent body"
+      }
+    ]
+  },
+  {
+    "id": "rcpt-007",
+    "service_name": "ShopEasy",
+    "entity_name": "ShopEasy Corp",
+    "doc_type": "NOTICE",
+    "received_at": "2026-01-12T12:05:00.000Z",
+    "category": "PAYMENT",
+    "retention": "1 year",
+    "retention_days": 365,
+    "revoke_path": "Help center > My data",
+    "third_party_services": ["Payment gateway"],
+    "data_items": ["Card alias", "Order history"],
+    "summary": "Updated payment policy and shortened retention to 1 year.",
+    "evidence": [
+      {
+        "field": "retention",
+        "quote": "Retention shortened to 1 year",
+        "why": "Noted in notice"
+      }
+    ]
   }
 ]
