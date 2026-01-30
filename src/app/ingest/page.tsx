@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Upload, FileText, Database, Trash2, X } from 'lucide-react'
@@ -19,12 +19,32 @@ export default function IngestPage() {
   const router = useRouter()
   const [textInput, setTextInput] = useState('')
   const [error, setError] = useState('')
-  const [receipts, setReceipts] = useState<Receipt[]>(() => listReceipts())
+  const [receipts, setReceipts] = useState<Receipt[]>([])
+  const [loading, setLoading] = useState(false)
   const [selectedSample, setSelectedSample] = useState<SampleDoc | null>(null)
   const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
   const samples = useMemo(() => sampleDocs as SampleDoc[], [])
+
+  useEffect(() => {
+    loadReceipts()
+  }, [])
+
+  const loadReceipts = async () => {
+    try {
+      const result = await listReceipts()
+      setReceipts(Array.isArray(result) ? result : [])
+    } catch (error) {
+      console.error('Failed to load receipts:', error)
+      setReceipts([])
+      // 백엔드 연결 실패 시 사용자에게 알림
+      const mockEnabled = process.env.NEXT_PUBLIC_MOCK === 'true'
+      if (!mockEnabled) {
+        setError('백엔드 서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인하세요.')
+      }
+    }
+  }
 
   const handleFileChange = (file: File | null) => {
     if (!file) {
@@ -39,43 +59,68 @@ export default function IngestPage() {
     reader.readAsText(file)
   }
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setError('')
+    setLoading(true)
     if (!textInput.trim()) {
       setError('입력 내용이 비어있습니다.')
+      setLoading(false)
       return
     }
-    const receipt = createReceiptFromText(textInput)
-    saveReceiptToStorage(receipt)
-    setReceipts(listReceipts())
-    router.push(`/receipt/${receipt.id}`)
+    try {
+      const receipt = await createReceiptFromText(textInput, 'manual')
+      await saveReceiptToStorage(receipt)
+      await loadReceipts()
+      router.push(`/receipt/${receipt.id}`)
+    } catch (err) {
+      setError('영수증 생성에 실패했습니다. 다시 시도해주세요.')
+      console.error('Failed to generate receipt:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleLoadSamples = () => {
     const loaded = loadSampleReceipts()
     setReceipts(loaded)
+    // Mock 모드에서만 사용
   }
 
-  const handleUseSample = () => {
+  const handleUseSample = async () => {
     if (!selectedSample) {
       setError('샘플 문서를 선택하세요.')
       return
     }
-    const receipt = createReceiptFromText(selectedSample.body)
-    saveReceiptToStorage(receipt)
-    setReceipts(listReceipts())
-    router.push(`/receipt/${receipt.id}`)
+    setError('')
+    setLoading(true)
+    try {
+      const receipt = await createReceiptFromText(selectedSample.body, 'sample')
+      await saveReceiptToStorage(receipt)
+      await loadReceipts()
+      router.push(`/receipt/${receipt.id}`)
+    } catch (err: any) {
+      const errorMessage = err?.message || '샘플 문서 처리에 실패했습니다.'
+      setError(errorMessage)
+      console.error('Failed to process sample:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleDeleteClick = (id: string) => {
     setDeleteTargetId(id)
   }
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteTargetId) return
-    deleteReceipt(deleteTargetId)
-    setReceipts(listReceipts())
-    setDeleteTargetId(null)
+    try {
+      await deleteReceipt(deleteTargetId)
+      await loadReceipts()
+      setDeleteTargetId(null)
+    } catch (err) {
+      setError('삭제에 실패했습니다.')
+      console.error('Failed to delete receipt:', err)
+    }
   }
 
   const handleDeleteCancel = () => {
@@ -136,9 +181,10 @@ export default function IngestPage() {
               )}
               <button
                 onClick={handleGenerate}
-                className="ml-auto rounded-2xl bg-[#1b1410] px-6 py-2 text-sm font-semibold text-white transition hover:bg-[#2d241f]"
+                disabled={loading}
+                className="ml-auto rounded-2xl bg-[#1b1410] px-6 py-2 text-sm font-semibold text-white transition hover:bg-[#2d241f] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                영수증 생성
+                {loading ? '생성 중...' : '영수증 생성'}
               </button>
             </div>
             {error && (

@@ -22,24 +22,36 @@ export default function DashboardPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
   useEffect(() => {
-    const result = listReceipts()
-    const receiptList = Array.isArray(result) ? result : []
-    setReceipts(receiptList)
-    // Receipt를 DocumentListItem으로 변환
-    setDocuments(receiptList.map(receiptToDocumentListItem))
+    loadReceipts()
   }, [])
+
+  const loadReceipts = async () => {
+    try {
+      const result = await listReceipts()
+      const receiptList = Array.isArray(result) ? result : []
+      setReceipts(receiptList)
+      // Receipt를 DocumentListItem으로 변환
+      setDocuments(receiptList.map(receiptToDocumentListItem))
+    } catch (error) {
+      console.error('Failed to load receipts:', error)
+      setReceipts([])
+      setDocuments([])
+    }
+  }
 
   const handleDeleteClick = (id: string) => {
     setDeleteTargetId(id)
   }
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteTargetId) return
-    deleteReceipt(deleteTargetId)
-    const updatedReceipts = listReceipts()
-    setReceipts(updatedReceipts)
-    setDocuments(updatedReceipts.map(receiptToDocumentListItem))
-    setDeleteTargetId(null)
+    try {
+      await deleteReceipt(deleteTargetId)
+      await loadReceipts()
+      setDeleteTargetId(null)
+    } catch (error) {
+      console.error('Failed to delete receipt:', error)
+    }
   }
 
   const handleDeleteCancel = () => {

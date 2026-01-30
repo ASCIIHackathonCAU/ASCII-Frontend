@@ -29,9 +29,18 @@ export default function ReceiptDetailPage() {
     if (!params?.id) {
       return
     }
-    const found = getReceiptById(params.id)
-    setReceipt(found)
+    loadReceipt()
   }, [params])
+
+  const loadReceipt = async () => {
+    if (!params?.id) return
+    try {
+      const found = await getReceiptById(params.id)
+      setReceipt(found)
+    } catch (error) {
+      console.error('Failed to load receipt:', error)
+    }
+  }
 
   const templateText = useMemo(() => {
     if (!receipt) {
@@ -69,10 +78,14 @@ export default function ReceiptDetailPage() {
     setShowDeleteConfirm(true)
   }
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!receipt) return
-    deleteReceipt(receipt.id)
-    router.push('/ingest')
+    try {
+      await deleteReceipt(receipt.id)
+      router.push('/ingest')
+    } catch (error) {
+      console.error('Failed to delete receipt:', error)
+    }
   }
 
   const handleDeleteCancel = () => {
