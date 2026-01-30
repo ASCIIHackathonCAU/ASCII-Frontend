@@ -1,53 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { Upload, BarChart3, BookOpen, Shield, FileText, Info, Cookie, Mail } from 'lucide-react'
-import { listCookieReceipts, generateDummyCookieReceipts, createCookieReceipt } from '@/lib/cookieClient'
-import { CookieReceipt } from '@/lib/cookieTypes'
+import { Upload, BarChart3, BookOpen, Shield, FileText, Info, Mail } from 'lucide-react'
 
 export default function Home() {
-  const [cookieReceipts, setCookieReceipts] = useState<CookieReceipt[]>([])
-  const [loadingCookies, setLoadingCookies] = useState(false)
-  const [dummyDataLoaded, setDummyDataLoaded] = useState(false)
-
-  useEffect(() => {
-    loadCookieReceipts()
-  }, [])
-
-  const loadCookieReceipts = async () => {
-    setLoadingCookies(true)
-    try {
-      const receipts = await listCookieReceipts()
-      setCookieReceipts(receipts)
-      
-      // 더미 데이터가 없고 아직 로드하지 않았으면 생성
-      if (receipts.length === 0 && !dummyDataLoaded) {
-        const dummyReceipts = generateDummyCookieReceipts()
-        // 더미 데이터를 백엔드에 저장 시도
-        try {
-          for (const receipt of dummyReceipts) {
-            await createCookieReceipt(receipt.site_name, receipt.site_url, receipt.cookies)
-          }
-          // 저장 후 다시 조회
-          const updatedReceipts = await listCookieReceipts()
-          setCookieReceipts(updatedReceipts)
-        } catch (saveError) {
-          // 저장 실패 시 프론트엔드에서만 표시
-          console.warn('Failed to save dummy cookie receipts:', saveError)
-          setCookieReceipts(dummyReceipts)
-        }
-        setDummyDataLoaded(true)
-      }
-    } catch (error) {
-      console.error('Failed to load cookie receipts:', error)
-      // 에러 발생 시 더미 데이터 사용
-      const dummyReceipts = generateDummyCookieReceipts()
-      setCookieReceipts(dummyReceipts)
-    } finally {
-      setLoadingCookies(false)
-    }
-  }
   return (
     <main className="min-h-screen bg-[#f6f1e8]">
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-10">
@@ -55,7 +11,7 @@ export default function Home() {
           <h1 className="text-5xl font-bold text-[#1b1410] leading-tight">
             동의 문서 관리
           </h1>
-          <p className="text-xl text-[#2d241f] leading-relaxed max-w-3xl">
+          <p className="text-xl text-[#2d241f] leading-relaxed">
             동의 문서를 체계적으로 관리하고, 문서 유형과 위험도를 파악하여 개인정보를 보호합니다.
             영수증을 생성하고 패턴을 분석하여 더 나은 개인정보 관리 결정을 내릴 수 있습니다.
           </p>
@@ -217,77 +173,6 @@ export default function Home() {
             </li>
           </ul>
         </Link>
-
-        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Cookie className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
-              <h2 className="text-2xl font-bold text-[#1b1410]">
-                쿠키 동의 정보
-              </h2>
-            </div>
-            <button
-              onClick={loadCookieReceipts}
-              disabled={loadingCookies}
-              className="rounded-xl bg-[#de3f1c] px-6 py-3 text-base font-bold text-white transition hover:bg-[#b23b1e] disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
-            >
-              {loadingCookies ? '로딩 중...' : '새로고침'}
-            </button>
-          </div>
-          <p className="text-lg text-[#2d241f] mb-6 leading-relaxed">
-            브라우저 확장 프로그램으로 수집한 쿠키 동의 정보를 확인합니다.
-          </p>
-          
-          {cookieReceipts.length === 0 ? (
-            <div className="rounded-xl border-2 border-[#e4d4c3] bg-[#fffaf4] p-6 text-lg text-[#2d241f]">
-              쿠키 영수증이 없습니다.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {cookieReceipts.map((receipt) => (
-                <div
-                  key={receipt.receipt_id}
-                  className="rounded-xl border-2 border-[#e4d4c3] bg-[#fffaf4] p-6 transition hover:bg-white hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="text-xl font-bold text-[#1b1410] mb-2">{receipt.site_name}</h4>
-                      <p className="text-base text-[#2d241f] mb-4">{receipt.site_url}</p>
-                      <div className="flex flex-wrap gap-3">
-                        <span className="rounded-lg bg-[#e6f6ee] px-4 py-2 text-base font-bold text-[#1e5b3a]">
-                          전체 {receipt.total_cookies}개
-                        </span>
-                        {receipt.first_party_count > 0 && (
-                          <span className="rounded-lg bg-[#e6f6ee] px-4 py-2 text-base font-bold text-[#1e5b3a]">
-                            1차: {receipt.first_party_count}
-                          </span>
-                        )}
-                        {receipt.third_party_count > 0 && (
-                          <span className="rounded-lg bg-[#ffe8d5] px-4 py-2 text-base font-bold text-[#8a4a1f]">
-                            3차: {receipt.third_party_count}
-                          </span>
-                        )}
-                        {receipt.advertising_count > 0 && (
-                          <span className="rounded-lg bg-[#ffe0cc] px-4 py-2 text-base font-bold text-[#b23b1e]">
-                            광고: {receipt.advertising_count}
-                          </span>
-                        )}
-                        {receipt.analytics_count > 0 && (
-                          <span className="rounded-lg bg-[#ffe8d5] px-4 py-2 text-base font-bold text-[#8a4a1f]">
-                            분석: {receipt.analytics_count}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-base font-semibold text-[#2d241f] whitespace-nowrap">
-                      {new Date(receipt.created_at).toLocaleDateString('ko-KR')}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
 
         <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
           <div className="flex items-center gap-3 mb-6">
