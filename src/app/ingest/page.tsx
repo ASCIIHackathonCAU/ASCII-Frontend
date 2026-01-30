@@ -129,42 +129,41 @@ export default function IngestPage() {
 
   return (
     <main className="min-h-screen bg-[#f6f1e8]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12">
-        <Link href="/" className="text-sm font-semibold text-[#de3f1c] hover:underline self-start">
+      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-10">
+        <Link href="/" className="text-lg font-bold text-[#de3f1c] hover:underline self-start py-2">
           ← 메인으로 돌아가기
         </Link>
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8b6b53]">
-              Module A
-            </p>
-            <h1 className="mt-3 text-4xl font-semibold text-[#1b1410]">
-              Ingest
+            <h1 className="text-5xl font-bold text-[#1b1410] leading-tight">
+              문서 업로드
             </h1>
-            <p className="mt-2 text-sm text-[#6b5a4b]">
-              이메일 본문을 붙여넣거나 EML/PDF 파일을 업로드합니다.
+            <p className="mt-4 text-xl text-[#2d241f] leading-relaxed">
+              이메일 본문을 붙여넣거나 파일을 업로드합니다.
             </p>
           </div>
         </header>
 
-        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
-            <Upload className="h-4 w-4 text-[#de3f1c]" />
-            문서 입력
+        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <Upload className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
+            <h2 className="text-2xl font-bold text-[#1b1410]">
+              문서 입력
+            </h2>
           </div>
-          <p className="mt-2 text-xs text-[#6b5a4b]">
+          <p className="mb-6 text-lg text-[#2d241f] leading-relaxed">
             동의 문서 텍스트를 붙여넣거나 파일을 업로드하세요.
           </p>
 
-          <div className="mt-6 space-y-4">
+          <div className="space-y-6">
             <textarea
-              className="h-40 w-full rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-sm text-[#1b1410] placeholder:text-[#6b5a4b] focus:border-[#de3f1c] focus:outline-none"
+              className="h-48 w-full rounded-xl border-2 border-[#2d241f] bg-[#fffaf4] p-5 text-lg text-[#1b1410] placeholder:text-[#6b5a4b] focus:border-[#de3f1c] focus:outline-none focus:ring-2 focus:ring-[#de3f1c]"
               placeholder="이메일 본문이나 동의 문서 텍스트를 붙여넣으세요"
               value={textInput}
               onChange={(event) => setTextInput(event.target.value)}
             />
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="cursor-pointer rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]">
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="cursor-pointer rounded-xl border-2 border-[#2d241f] bg-white px-6 py-4 text-lg font-bold text-[#1b1410] transition hover:bg-[#fffaf4] hover:shadow-md min-h-[56px] flex items-center">
                 <input
                   type="file"
                   accept=".eml,.pdf,.txt"
@@ -174,40 +173,42 @@ export default function IngestPage() {
                 파일 선택
               </label>
               {selectedFileName && (
-                <span className="text-xs text-[#6b5a4b]">{selectedFileName}</span>
+                <span className="text-lg font-semibold text-[#2d241f]">{selectedFileName}</span>
               )}
               {!selectedFileName && (
-                <span className="text-xs text-[#6b5a4b]">선택된 파일 없음</span>
+                <span className="text-lg text-[#6b5a4b]">선택된 파일 없음</span>
               )}
               <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="ml-auto rounded-2xl bg-[#1b1410] px-6 py-2 text-sm font-semibold text-white transition hover:bg-[#2d241f] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-auto rounded-xl bg-[#de3f1c] px-8 py-4 text-lg font-bold text-white transition hover:bg-[#b23b1e] disabled:opacity-50 disabled:cursor-not-allowed min-h-[56px]"
               >
                 {loading ? '생성 중...' : '영수증 생성'}
               </button>
             </div>
             {error && (
-              <div className="rounded-2xl border border-[#f1b59f] bg-[#ffe0cc] px-4 py-2 text-xs text-[#b23b1e]">
+              <div className="rounded-xl border-2 border-[#f1b59f] bg-[#ffe0cc] px-6 py-4 text-lg font-semibold text-[#b23b1e]">
                 {error}
               </div>
             )}
           </div>
         </section>
 
-        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
-            <FileText className="h-4 w-4 text-[#de3f1c]" />
-            데모 샘플
+        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <FileText className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
+            <h2 className="text-2xl font-bold text-[#1b1410]">
+              데모 샘플
+            </h2>
           </div>
-          <p className="mt-2 text-xs text-[#6b5a4b]">
+          <p className="mb-6 text-lg text-[#2d241f] leading-relaxed">
             샘플 문서를 사용하여 테스트할 수 있습니다.
           </p>
 
-          <div className="mt-6 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-4">
               <select
-                className="flex-1 rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] px-4 py-2 text-sm text-[#1b1410] focus:border-[#de3f1c] focus:outline-none"
+                className="flex-1 rounded-xl border-2 border-[#2d241f] bg-[#fffaf4] px-5 py-4 text-lg text-[#1b1410] focus:border-[#de3f1c] focus:outline-none focus:ring-2 focus:ring-[#de3f1c] min-h-[56px]"
                 value={selectedSample?.id ?? ''}
                 onChange={(event) => {
                   const value = event.target.value
@@ -224,13 +225,13 @@ export default function IngestPage() {
               </select>
               <button
                 onClick={handleUseSample}
-                className="rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]"
+                className="rounded-xl border-2 border-[#2d241f] bg-white px-6 py-4 text-lg font-bold text-[#1b1410] transition hover:bg-[#fffaf4] hover:shadow-md min-h-[56px]"
               >
                 샘플 사용
               </button>
               <button
                 onClick={handleLoadSamples}
-                className="rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]"
+                className="rounded-xl border-2 border-[#2d241f] bg-white px-6 py-4 text-lg font-bold text-[#1b1410] transition hover:bg-[#fffaf4] hover:shadow-md min-h-[56px]"
               >
                 샘플 영수증 로드
               </button>
@@ -238,51 +239,53 @@ export default function IngestPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
-              <Database className="h-4 w-4 text-[#de3f1c]" />
-              저장된 영수증
+        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Database className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
+              <h2 className="text-2xl font-bold text-[#1b1410]">
+                저장된 영수증
+              </h2>
             </div>
             <Link
               href="/dashboard"
-              className="text-xs font-semibold text-[#de3f1c] hover:underline"
+              className="rounded-xl bg-[#de3f1c] px-6 py-3 text-lg font-bold text-white transition hover:bg-[#b23b1e] min-h-[48px] flex items-center"
             >
-              Dashboard로 이동
+              통계 보기
             </Link>
           </div>
-          <p className="mt-2 text-xs text-[#6b5a4b]">
+          <p className="mb-6 text-lg text-[#2d241f] leading-relaxed">
             생성된 영수증 목록을 확인합니다.
           </p>
 
           {receipts.length === 0 && (
-            <div className="mt-6 rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-sm text-[#6b5a4b]">
+            <div className="rounded-xl border-2 border-[#e4d4c3] bg-[#fffaf4] p-6 text-lg text-[#2d241f]">
               아직 저장된 영수증이 없습니다.
             </div>
           )}
-          <ul className="mt-6 space-y-3">
+          <ul className="space-y-4">
             {receipts.map((receipt) => (
               <li
                 key={receipt.id}
-                className="flex items-center justify-between rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 transition hover:bg-white"
+                className="flex items-center justify-between rounded-xl border-2 border-[#e4d4c3] bg-[#fffaf4] p-6 transition hover:bg-white hover:shadow-md"
               >
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#1b1410]">{receipt.service_name}</p>
-                  <p className="mt-1 text-xs text-[#6b5a4b]">{receipt.summary}</p>
+                  <p className="text-xl font-bold text-[#1b1410] mb-2">{receipt.service_name}</p>
+                  <p className="text-lg text-[#2d241f]">{receipt.summary}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <Link
                     href={`/receipt/${receipt.id}`}
-                    className="text-xs font-semibold text-[#de3f1c] hover:underline"
+                    className="rounded-xl bg-[#de3f1c] px-6 py-3 text-lg font-bold text-white transition hover:bg-[#b23b1e] min-h-[48px] flex items-center"
                   >
                     보기
                   </Link>
                   <button
                     onClick={() => handleDeleteClick(receipt.id)}
-                    className="rounded-lg p-1.5 text-[#b23b1e] transition hover:bg-[#ffe0cc]"
+                    className="rounded-xl bg-[#ffe0cc] p-3 text-[#b23b1e] transition hover:bg-[#f1b59f] min-h-[48px] min-w-[48px] flex items-center justify-center"
                     title="삭제"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-6 w-6" strokeWidth={2.5} />
                   </button>
                 </div>
               </li>
@@ -292,30 +295,30 @@ export default function IngestPage() {
       </div>
 
       {deleteTargetId && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_20px_50px_rgba(15,11,9,0.3)]">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-[#1b1410]">영수증 삭제</h3>
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60 px-4">
+          <div className="w-full max-w-lg rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-[#1b1410]">영수증 삭제</h3>
               <button
                 onClick={handleDeleteCancel}
-                className="rounded-lg p-1 text-[#6b5a4b] transition hover:bg-[#fffaf4]"
+                className="rounded-xl p-2 text-[#2d241f] transition hover:bg-[#fffaf4] min-h-[48px] min-w-[48px] flex items-center justify-center"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" strokeWidth={2.5} />
               </button>
             </div>
-            <p className="text-sm text-[#6b5a4b] mb-6">
+            <p className="text-xl text-[#2d241f] mb-8 leading-relaxed">
               이 영수증을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 onClick={handleDeleteCancel}
-                className="flex-1 rounded-2xl border border-[#e4d4c3] bg-white px-4 py-2 text-sm font-semibold text-[#1b1410] transition hover:bg-[#fffaf4]"
+                className="flex-1 rounded-xl border-2 border-[#2d241f] bg-white px-6 py-4 text-lg font-bold text-[#1b1410] transition hover:bg-[#fffaf4] min-h-[56px]"
               >
                 취소
               </button>
               <button
                 onClick={handleDeleteConfirm}
-                className="flex-1 rounded-2xl bg-[#b23b1e] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#9a3219]"
+                className="flex-1 rounded-xl bg-[#b23b1e] px-6 py-4 text-lg font-bold text-white transition hover:bg-[#9a3219] min-h-[56px]"
               >
                 삭제
               </button>

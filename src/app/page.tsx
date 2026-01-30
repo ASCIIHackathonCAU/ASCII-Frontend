@@ -50,160 +50,174 @@ export default function Home() {
   }
   return (
     <main className="min-h-screen bg-[#f6f1e8]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12">
-        <header className="flex flex-col gap-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8b6b53]">
-            ASCII
-          </p>
-          <h1 className="text-4xl font-semibold text-[#1b1410]">
-            Consent & Request Receipt Inbox
+      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-10">
+        <header className="flex flex-col gap-6">
+          <h1 className="text-5xl font-bold text-[#1b1410] leading-tight">
+            동의 문서 관리
           </h1>
-          <p className="text-sm text-[#6b5a4b]">
-            + Eraser & Revocation Concierge
-          </p>
-          <p className="mt-4 text-sm text-[#6b5a4b] max-w-3xl">
+          <p className="text-xl text-[#2d241f] leading-relaxed max-w-3xl">
             동의 문서를 체계적으로 관리하고, 문서 유형과 위험도를 파악하여 개인정보를 보호합니다.
             영수증을 생성하고 패턴을 분석하여 더 나은 개인정보 관리 결정을 내릴 수 있습니다.
           </p>
         </header>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-2">
           <Link
             href="/ingest"
-            className="group rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)] transition hover:-translate-y-1"
+            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="rounded-2xl bg-[#fff4e6] p-3">
-                <Upload className="h-6 w-6 text-[#de3f1c]" />
+            <div className="flex items-center gap-4 mb-6">
+              <div className="rounded-xl bg-[#fff4e6] p-4">
+                <Upload className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
               </div>
-              <h2 className="text-2xl font-semibold text-[#1b1410]">
-                Ingest{' '}
-                <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none text-[#de3f1c]">
-                  →
-                </span>
+              <h2 className="text-3xl font-bold text-[#1b1410]">
+                문서 업로드
               </h2>
             </div>
-            <p className="text-sm text-[#6b5a4b] mb-3">
+            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
               동의 문서를 붙여넣거나 업로드합니다.
             </p>
-            <ul className="space-y-1 text-xs text-[#6b5a4b]">
-              <li>• 텍스트 붙여넣기 또는 파일 업로드</li>
-              <li>• 샘플 문서로 테스트</li>
-              <li>• 영수증 자동 생성</li>
+            <ul className="space-y-2 text-base text-[#2d241f]">
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>텍스트 붙여넣기 또는 파일 업로드</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>샘플 문서로 테스트</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>영수증 자동 생성</span>
+              </li>
             </ul>
           </Link>
 
           <Link
             href="/dashboard"
-            className="group rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)] transition hover:-translate-y-1"
+            className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="rounded-2xl bg-[#fff4e6] p-3">
-                <BarChart3 className="h-6 w-6 text-[#de3f1c]" />
+            <div className="flex items-center gap-4 mb-6">
+              <div className="rounded-xl bg-[#fff4e6] p-4">
+                <BarChart3 className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
               </div>
-              <h2 className="text-2xl font-semibold text-[#1b1410]">
-                Dashboard{' '}
-                <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none text-[#de3f1c]">
-                  →
-                </span>
+              <h2 className="text-3xl font-bold text-[#1b1410]">
+                통계 보기
               </h2>
             </div>
-            <p className="text-sm text-[#6b5a4b] mb-3">
+            <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
               패턴 통계와 분포를 확인합니다.
             </p>
-            <ul className="space-y-1 text-xs text-[#6b5a4b]">
-              <li>• 월별 수신 건수 분석</li>
-              <li>• 위험도별 분류 통계</li>
-              <li>• 카테고리 분포 확인</li>
+            <ul className="space-y-2 text-base text-[#2d241f]">
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>월별 수신 건수 분석</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>위험도별 분류 통계</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#de3f1c] font-bold">•</span>
+                <span>카테고리 분포 확인</span>
+              </li>
             </ul>
           </Link>
         </div>
 
         <Link
           href="/inbox"
-          className="group rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)] transition hover:-translate-y-1"
+          className="group rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg transition-all hover:bg-[#fffaf4] hover:shadow-xl"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-2xl bg-[#fff4e6] p-3">
-              <BookOpen className="h-6 w-6 text-[#de3f1c]" />
+          <div className="flex items-center gap-4 mb-6">
+            <div className="rounded-xl bg-[#fff4e6] p-4">
+              <BookOpen className="h-10 w-10 text-[#de3f1c]" strokeWidth={2.5} />
             </div>
-            <h2 className="text-2xl font-semibold text-[#1b1410]">
-              Inbox{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none text-[#de3f1c]">
-                →
-              </span>
+            <h2 className="text-3xl font-bold text-[#1b1410]">
+              가이드라인 보기
             </h2>
           </div>
-          <p className="text-sm text-[#6b5a4b] mb-3">
+          <p className="text-lg text-[#2d241f] mb-4 leading-relaxed">
             문서 유형과 위험도 가이드라인을 확인합니다.
           </p>
-          <ul className="space-y-1 text-xs text-[#6b5a4b]">
-            <li>• 문서 유형별 가이드라인</li>
-            <li>• 위험도 분류 기준</li>
-            <li>• 각 유형별 주의사항</li>
+          <ul className="space-y-2 text-base text-[#2d241f]">
+            <li className="flex items-start gap-2">
+              <span className="text-[#de3f1c] font-bold">•</span>
+              <span>문서 유형별 가이드라인</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#de3f1c] font-bold">•</span>
+              <span>위험도 분류 기준</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#de3f1c] font-bold">•</span>
+              <span>각 유형별 주의사항</span>
+            </li>
           </ul>
         </Link>
 
-        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
-              <Cookie className="h-4 w-4 text-[#de3f1c]" />
-              Cookie Receipts
+        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Cookie className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
+              <h2 className="text-2xl font-bold text-[#1b1410]">
+                쿠키 동의 정보
+              </h2>
             </div>
             <button
               onClick={loadCookieReceipts}
               disabled={loadingCookies}
-              className="text-xs font-semibold text-[#de3f1c] hover:underline disabled:opacity-50"
+              className="rounded-xl bg-[#de3f1c] px-6 py-3 text-base font-bold text-white transition hover:bg-[#b23b1e] disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
             >
               {loadingCookies ? '로딩 중...' : '새로고침'}
             </button>
           </div>
-          <p className="text-xs text-[#6b5a4b] mb-4">
+          <p className="text-lg text-[#2d241f] mb-6 leading-relaxed">
             브라우저 확장 프로그램으로 수집한 쿠키 동의 정보를 확인합니다.
           </p>
           
           {cookieReceipts.length === 0 ? (
-            <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-sm text-[#6b5a4b]">
+            <div className="rounded-xl border-2 border-[#e4d4c3] bg-[#fffaf4] p-6 text-lg text-[#2d241f]">
               쿠키 영수증이 없습니다.
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {cookieReceipts.map((receipt) => (
                 <div
                   key={receipt.receipt_id}
-                  className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 transition hover:bg-white"
+                  className="rounded-xl border-2 border-[#e4d4c3] bg-[#fffaf4] p-6 transition hover:bg-white hover:shadow-md"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-[#1b1410]">{receipt.site_name}</h4>
-                      <p className="mt-1 text-xs text-[#6b5a4b]">{receipt.site_url}</p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        <span className="rounded-lg bg-[#e6f6ee] px-2 py-1 text-xs text-[#1e5b3a]">
+                      <h4 className="text-xl font-bold text-[#1b1410] mb-2">{receipt.site_name}</h4>
+                      <p className="text-base text-[#2d241f] mb-4">{receipt.site_url}</p>
+                      <div className="flex flex-wrap gap-3">
+                        <span className="rounded-lg bg-[#e6f6ee] px-4 py-2 text-base font-bold text-[#1e5b3a]">
                           전체 {receipt.total_cookies}개
                         </span>
                         {receipt.first_party_count > 0 && (
-                          <span className="rounded-lg bg-[#e6f6ee] px-2 py-1 text-xs text-[#1e5b3a]">
-                            1st: {receipt.first_party_count}
+                          <span className="rounded-lg bg-[#e6f6ee] px-4 py-2 text-base font-bold text-[#1e5b3a]">
+                            1차: {receipt.first_party_count}
                           </span>
                         )}
                         {receipt.third_party_count > 0 && (
-                          <span className="rounded-lg bg-[#ffe8d5] px-2 py-1 text-xs text-[#8a4a1f]">
-                            3rd: {receipt.third_party_count}
+                          <span className="rounded-lg bg-[#ffe8d5] px-4 py-2 text-base font-bold text-[#8a4a1f]">
+                            3차: {receipt.third_party_count}
                           </span>
                         )}
                         {receipt.advertising_count > 0 && (
-                          <span className="rounded-lg bg-[#ffe0cc] px-2 py-1 text-xs text-[#b23b1e]">
+                          <span className="rounded-lg bg-[#ffe0cc] px-4 py-2 text-base font-bold text-[#b23b1e]">
                             광고: {receipt.advertising_count}
                           </span>
                         )}
                         {receipt.analytics_count > 0 && (
-                          <span className="rounded-lg bg-[#ffe8d5] px-2 py-1 text-xs text-[#8a4a1f]">
+                          <span className="rounded-lg bg-[#ffe8d5] px-4 py-2 text-base font-bold text-[#8a4a1f]">
                             분석: {receipt.analytics_count}
                           </span>
                         )}
                       </div>
                     </div>
-                    <div className="text-xs text-[#6b5a4b]">
+                    <div className="text-base font-semibold text-[#2d241f] whitespace-nowrap">
                       {new Date(receipt.created_at).toLocaleDateString('ko-KR')}
                     </div>
                   </div>
@@ -213,32 +227,46 @@ export default function Home() {
           )}
         </section>
 
-        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410] mb-4">
-            <Info className="h-4 w-4 text-[#de3f1c]" />
-            서비스 소개
+        <section className="rounded-2xl border-4 border-[#2d241f] bg-white p-8 shadow-lg">
+          <div className="flex items-center gap-3 mb-6">
+            <Info className="h-8 w-8 text-[#de3f1c]" strokeWidth={2.5} />
+            <h2 className="text-2xl font-bold text-[#1b1410]">
+              서비스 소개
+            </h2>
           </div>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-[#1b1410] flex items-center gap-2">
-                <FileText className="h-4 w-4 text-[#de3f1c]" />
-                Module A: Consent & Request Receipt Inbox
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#1b1410] flex items-center gap-3">
+                <FileText className="h-6 w-6 text-[#de3f1c]" strokeWidth={2.5} />
+                동의 문서 관리
               </h3>
-              <p className="text-xs text-[#6b5a4b]">
+              <p className="text-lg text-[#2d241f] leading-relaxed">
                 동의 문서를 업로드하고 분석하여 영수증을 생성합니다. 문서의 유형과 위험도를 자동으로 분류하여
                 개인정보 보호에 도움을 줍니다.
               </p>
             </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-[#1b1410] flex items-center gap-2">
-                <Shield className="h-4 w-4 text-[#de3f1c]" />
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#1b1410] flex items-center gap-3">
+                <Shield className="h-6 w-6 text-[#de3f1c]" strokeWidth={2.5} />
                 주요 기능
               </h3>
-              <ul className="space-y-1 text-xs text-[#6b5a4b]">
-                <li>• 동의 문서 텍스트 분석 및 구조화</li>
-                <li>• 위험도 자동 분류 (LOW/MED/HIGH)</li>
-                <li>• 문서 유형별 가이드라인 제공</li>
-                <li>• 영수증 패턴 통계 및 분석</li>
+              <ul className="space-y-2 text-lg text-[#2d241f]">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#de3f1c] font-bold">•</span>
+                  <span>동의 문서 텍스트 분석 및 구조화</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#de3f1c] font-bold">•</span>
+                  <span>위험도 자동 분류 (낮음/보통/높음)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#de3f1c] font-bold">•</span>
+                  <span>문서 유형별 가이드라인 제공</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#de3f1c] font-bold">•</span>
+                  <span>영수증 패턴 통계 및 분석</span>
+                </li>
               </ul>
             </div>
           </div>
