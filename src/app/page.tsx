@@ -1,7 +1,53 @@
+'use client'
+
 import Link from 'next/link'
-import { Upload, BarChart3, BookOpen, Shield, FileText, Info } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Upload, BarChart3, BookOpen, Shield, FileText, Info, Cookie } from 'lucide-react'
+import { listCookieReceipts, generateDummyCookieReceipts, createCookieReceipt } from '@/lib/cookieClient'
+import { CookieReceipt } from '@/lib/cookieTypes'
 
 export default function Home() {
+  const [cookieReceipts, setCookieReceipts] = useState<CookieReceipt[]>([])
+  const [loadingCookies, setLoadingCookies] = useState(false)
+  const [dummyDataLoaded, setDummyDataLoaded] = useState(false)
+
+  useEffect(() => {
+    loadCookieReceipts()
+  }, [])
+
+  const loadCookieReceipts = async () => {
+    setLoadingCookies(true)
+    try {
+      const receipts = await listCookieReceipts()
+      setCookieReceipts(receipts)
+      
+      // 더미 데이터가 없고 아직 로드하지 않았으면 생성
+      if (receipts.length === 0 && !dummyDataLoaded) {
+        const dummyReceipts = generateDummyCookieReceipts()
+        // 더미 데이터를 백엔드에 저장 시도
+        try {
+          for (const receipt of dummyReceipts) {
+            await createCookieReceipt(receipt.site_name, receipt.site_url, receipt.cookies)
+          }
+          // 저장 후 다시 조회
+          const updatedReceipts = await listCookieReceipts()
+          setCookieReceipts(updatedReceipts)
+        } catch (saveError) {
+          // 저장 실패 시 프론트엔드에서만 표시
+          console.warn('Failed to save dummy cookie receipts:', saveError)
+          setCookieReceipts(dummyReceipts)
+        }
+        setDummyDataLoaded(true)
+      }
+    } catch (error) {
+      console.error('Failed to load cookie receipts:', error)
+      // 에러 발생 시 더미 데이터 사용
+      const dummyReceipts = generateDummyCookieReceipts()
+      setCookieReceipts(dummyReceipts)
+    } finally {
+      setLoadingCookies(false)
+    }
+  }
   return (
     <main className="min-h-screen bg-[#f6f1e8]">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12">
@@ -97,6 +143,75 @@ export default function Home() {
             <li>• 각 유형별 주의사항</li>
           </ul>
         </Link>
+
+        <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410]">
+              <Cookie className="h-4 w-4 text-[#de3f1c]" />
+              Cookie Receipts
+            </div>
+            <button
+              onClick={loadCookieReceipts}
+              disabled={loadingCookies}
+              className="text-xs font-semibold text-[#de3f1c] hover:underline disabled:opacity-50"
+            >
+              {loadingCookies ? '로딩 중...' : '새로고침'}
+            </button>
+          </div>
+          <p className="text-xs text-[#6b5a4b] mb-4">
+            브라우저 확장 프로그램으로 수집한 쿠키 동의 정보를 확인합니다.
+          </p>
+          
+          {cookieReceipts.length === 0 ? (
+            <div className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 text-sm text-[#6b5a4b]">
+              쿠키 영수증이 없습니다.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {cookieReceipts.map((receipt) => (
+                <div
+                  key={receipt.receipt_id}
+                  className="rounded-2xl border border-[#e4d4c3] bg-[#fffaf4] p-4 transition hover:bg-white"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-[#1b1410]">{receipt.site_name}</h4>
+                      <p className="mt-1 text-xs text-[#6b5a4b]">{receipt.site_url}</p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <span className="rounded-lg bg-[#e6f6ee] px-2 py-1 text-xs text-[#1e5b3a]">
+                          전체 {receipt.total_cookies}개
+                        </span>
+                        {receipt.first_party_count > 0 && (
+                          <span className="rounded-lg bg-[#e6f6ee] px-2 py-1 text-xs text-[#1e5b3a]">
+                            1st: {receipt.first_party_count}
+                          </span>
+                        )}
+                        {receipt.third_party_count > 0 && (
+                          <span className="rounded-lg bg-[#ffe8d5] px-2 py-1 text-xs text-[#8a4a1f]">
+                            3rd: {receipt.third_party_count}
+                          </span>
+                        )}
+                        {receipt.advertising_count > 0 && (
+                          <span className="rounded-lg bg-[#ffe0cc] px-2 py-1 text-xs text-[#b23b1e]">
+                            광고: {receipt.advertising_count}
+                          </span>
+                        )}
+                        {receipt.analytics_count > 0 && (
+                          <span className="rounded-lg bg-[#ffe8d5] px-2 py-1 text-xs text-[#8a4a1f]">
+                            분석: {receipt.analytics_count}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-xs text-[#6b5a4b]">
+                      {new Date(receipt.created_at).toLocaleDateString('ko-KR')}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
         <section className="rounded-3xl border border-[#e4d4c3] bg-white p-6 shadow-[0_16px_40px_rgba(50,36,28,0.08)]">
           <div className="flex items-center gap-2 text-sm font-semibold text-[#1b1410] mb-4">
