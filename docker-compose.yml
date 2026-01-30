@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    container_name: ascii-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_BACKEND_URL=http://host.docker.internal:8000
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./next.config.js:/app/next.config.js
+      - ./package.json:/app/package.json
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+volumes:
+  node_modules:
+
